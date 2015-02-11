@@ -1,0 +1,22 @@
+{
+  "main": "index.html",
+  "name": "tinyRPG",
+  "description": "a tiny rpg",
+  "version": "0.1.0",
+  "keywords": [ "rpg", "8bit", "loafer" ],
+  "window": {
+    "title": "tinyRPG",
+    "icon": "link.png",
+    "toolbar": false,
+    "frame": true,
+    "width": 960,
+    "height": 640,
+    "position": "mouse",
+    "min_width": 240,
+    "min_height": 160,
+    "max_width": 960,
+    "max_height": 640
+  },
+  "webkit": {
+  }
+}
