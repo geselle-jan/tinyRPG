@@ -34,15 +34,17 @@ FoeView.prototype.create = function() {
 };
 
 FoeView.prototype.update = function() {
-    this.foeMarkers.forEachAlive(function(foeMarker) {
-        foeMarker.kill();
-    }, this);
+    if (game.mode == 'level') {
+        this.foeMarkers.forEachAlive(function(foeMarker) {
+            foeMarker.kill();
+        }, this);
+    }
 
     return this;
 };
 
 FoeView.prototype.updateGroup = function(group) {
-    if (game.controls.f.isDown) {
+    if (game.controls.f.isDown && game.mode == 'level') {
 
         var topLeft = {
                 x: game.camera.x,

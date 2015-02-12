@@ -4,6 +4,7 @@ var Controls = function () {
     this.left           = false;
     this.right          = false;
 
+    this.esc            = false;
     this.f              = false;
 
     this.primary        = false;
@@ -33,6 +34,9 @@ Controls.prototype.create = function() {
     );
     this.shift          = game.input.keyboard.addKey(
         Phaser.Keyboard.SHIFT
+    );
+    this.esc            = game.input.keyboard.addKey(
+        Phaser.Keyboard.ESC
     );
     this.f              = game.input.keyboard.addKey(
         Phaser.Keyboard.F

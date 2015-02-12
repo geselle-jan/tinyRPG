@@ -307,6 +307,7 @@ Girl.prototype.update = function() {
                     bullet.body.velocity.x = bullet.body.savedVelocity.x;
                     bullet.body.velocity.y = bullet.body.savedVelocity.y;
                 }
+                bullet.animations.paused = false;
             });
         }
 
@@ -347,7 +348,7 @@ Girl.prototype.update = function() {
 
         if (game.state.current != 'Town') {
 
-            if (game.controls.primary && game.time.now - this.fireCooldown > 500 && this.bullets.countDead() > 0) {
+            if (game.controls.primary && game.time.elapsedSince(this.fireCooldown) > 500 && this.bullets.countDead() > 0) {
 
                 var bullet = this.bullets.getFirstDead();
                 bullet.reset(this.player.body.center.x, this.player.body.center.y - 16);
@@ -359,7 +360,7 @@ Girl.prototype.update = function() {
                 this.fireCooldown = game.time.now;
             }
 
-            if (game.controls.secondary && game.time.now - this.fireCooldown > 120 && this.bullets.countDead() > 0) {
+            if (game.controls.secondary && game.time.elapsedSince(this.fireCooldown) > 120 && this.bullets.countDead() > 0) {
 
                 var bullet = this.bullets.getFirstDead();
                 bullet.reset(this.player.body.center.x, this.player.body.center.y - 16);
@@ -437,6 +438,7 @@ Girl.prototype.update = function() {
                 bullet.body.velocity.x = 0;
                 bullet.body.velocity.y = 0;
 
+                bullet.animations.paused = true;
             });
         }
     }

@@ -16,6 +16,8 @@ TinyRPG.Default.prototype = {
         game.ui.health.create();
         game.ui.textbox = new TextBox();
         game.ui.textbox.create();
+        game.ui.pauseMenu = new PauseMenu();
+        game.ui.pauseMenu.create();
         game.ui.crosshair = new Crosshair();
         game.ui.crosshair.create();
 	},
@@ -25,6 +27,7 @@ TinyRPG.Default.prototype = {
 		game.ui.fps.update();
 		game.ui.health.update();
 		game.ui.textbox.update();
+		game.ui.pauseMenu.update();
 		game.ui.crosshair.update();
 	},
 	render: function(){
