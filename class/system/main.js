@@ -18,3 +18,11 @@ game.state.add('DungeonDebugger', TinyRPG.DungeonDebugger);
 // start the Boot state
 game.state.start('Boot');
 
+$(function() {
+  $( window ).konami({
+        code : [38,38,40,40,37,39,37,39], // up up down down left right left right
+        cheat: function() {
+            $('body').toggleClass('retro');
+        }
+    });
+})
