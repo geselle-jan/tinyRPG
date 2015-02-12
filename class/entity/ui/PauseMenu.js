@@ -29,13 +29,6 @@ PauseMenu.prototype.create = function() {
 		}
 	}, this);
 
-	game.onBlur.add(function () {
-		if (game.mode == 'level') {
-			game.ui.pauseMenu.show();
-		}
-		game.input.reset();
-	}, this);
-
     return this;
 };
 

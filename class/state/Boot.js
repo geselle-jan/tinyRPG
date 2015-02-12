@@ -13,6 +13,15 @@ TinyRPG.Boot.prototype = {
 		game.scale.refresh();
 
 		game.stage.disableVisibilityChange = true;
+
+		game.onBlur.add(function () {
+			game.input.reset();
+			game.inactive = true;
+		}, this);
+
+		game.onFocus.add(function () {
+			game.inactive = false;
+		}, this);
 		
 		// start the Preloader state
 		this.state.start('Preloader');

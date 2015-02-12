@@ -422,7 +422,8 @@ Girl.prototype.update = function() {
                     break;
             }
         }
-    } else {
+    } 
+    if (game.mode != 'level' || game.inactive) {
         if (!this.player.animations.paused) {
             game.controls.cursors.up.onUp.dispatch();
             game.controls.cursors.down.onUp.dispatch();
