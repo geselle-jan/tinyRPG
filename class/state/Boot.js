@@ -11,6 +11,8 @@ TinyRPG.Boot.prototype = {
 		game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 		game.scale.setScreenSize();
 		game.scale.refresh();
+
+		game.stage.disableVisibilityChange = true;
 		
 		// start the Preloader state
 		this.state.start('Preloader');
