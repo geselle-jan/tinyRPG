@@ -3,11 +3,12 @@ var TextBox = function () {
 };
 
 TextBox.prototype.create = function() {
-	this.background = game.add.sprite(0, 0, 'textbox');
-    this.background.scale.setTo(4);
-    this.background.fixedToCamera = true;
-    this.background.cameraOffset.x = 32;
-    this.background.cameraOffset.y = game.camera.height - this.background.height - 32;
+	this.background = new Box({
+        width: 224,
+        height: 48,
+        x: 32,
+        y: game.camera.height - (48*4) - 32
+	});
 
     this.text = game.add.bitmapText(0, 0, 'silkscreen', '', 32);
 	this.text.fixedToCamera = true;

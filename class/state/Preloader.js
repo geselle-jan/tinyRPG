@@ -7,6 +7,7 @@ TinyRPG.Preloader.prototype = {
 		this.load.setPreloadSprite(this.preloadBar);
 
 		this.load.image('menubg', 'asset/backgrounds/main-menu.png');
+		this.load.image('boxborder', 'asset/sprites/box_border.png');
 		this.load.spritesheet('startbutton', 'asset/sprites/start_button.png', 59, 38);
 		this.load.spritesheet('textbox', 'asset/sprites/textbox.png');
 		this.load.spritesheet('foemarker', 'asset/sprites/foe_marker.png');
