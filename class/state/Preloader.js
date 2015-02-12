@@ -10,6 +10,7 @@ TinyRPG.Preloader.prototype = {
 		this.load.spritesheet('startbutton', 'asset/sprites/start_button.png', 59, 38);
 		this.load.spritesheet('textbox', 'asset/sprites/textbox.png');
 		this.load.spritesheet('foemarker', 'asset/sprites/foe_marker.png');
+		this.load.spritesheet('healthbar', 'asset/sprites/health_bar.png');
 		this.load.spritesheet('tiny16', 'asset/tilesets/tiny16.png', 64, 64);
 		this.load.spritesheet('collision', 'asset/tilesets/collision.png', 64, 64);
 		this.load.tilemap('level', null, DungeonGenerator.GetTiledJSON({ empty: true }), Phaser.Tilemap.TILED_JSON );

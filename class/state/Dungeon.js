@@ -50,8 +50,6 @@ TinyRPG.Dungeon.prototype = {
         this.girl = new Girl();
         this.girl.create();
 
-        console.log(this.girl.player.position);
-
         game.state.states.Default.create();
 
     },

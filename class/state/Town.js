@@ -42,11 +42,9 @@ TinyRPG.Town.prototype = {
                     if (e.trigger.type == 'onTileClick') {
                         x = Math.floor(game.input.worldX / 64);
                         y = Math.floor(game.input.worldY / 64);
-                        console.log(x,y);
                         if (e.trigger.location.x == x && e.trigger.location.y == y) {
                             if (typeof e.trigger.layer != 'undefined') {
                                 tile = game.state.states[game.state.current].map.getTile( x, y, e.trigger.layer);
-                                console.log(tile.index);
                             }
                             if (typeof e.trigger.maxDistance != 'undefined') {
                                 line = new Phaser.Line(

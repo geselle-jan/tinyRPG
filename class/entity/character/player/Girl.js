@@ -132,11 +132,9 @@ Girl.prototype.create = function() {
         while (!this.playerPlaced) {
             randX = Helpers.GetRandom(0,map.width-1);
             randY = Helpers.GetRandom(0,map.height-1);
-            console.log(randX,randY);
             if (map.getTile(randX,randY) && map.getTile(randX,randY).index == desiredIndex) {
                 this.playerPlaced = true;
                 this.player.position.setTo(randX * map.tileWidth + map.tileWidth, randY * map.tileHeight + map.tileHeight);
-                console.log(this.player.position);
             }
         }
     }
