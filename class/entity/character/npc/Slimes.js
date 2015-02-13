@@ -13,7 +13,6 @@ Slimes.prototype.create = function() {
         randX,
         randY,
         desiredIndex = 105,
-        skeleton,
         slime,
         walkFPS = 4;
 

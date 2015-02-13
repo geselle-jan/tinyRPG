@@ -13,7 +13,7 @@ Skeletons.prototype.create = function() {
         randY,
         desiredIndex = 105,
         skeleton,
-        slime;
+        walkFPS = 3;
 
     while (i < this.count) {
         randX = Helpers.GetRandom(0,map.width);
@@ -25,6 +25,65 @@ Skeletons.prototype.create = function() {
             skeleton.health = 5;
             skeleton.hitTimeout = false;
             i++;
+
+            skeleton.animations.add(
+                'standDown',
+                [134],
+                0,
+                false
+            );
+
+            skeleton.animations.add(
+                'walkDown',
+                [135,136],
+                walkFPS,
+                true
+            );
+
+            skeleton.animations.add(
+                'standLeft',
+                [150],
+                0,
+                false
+            );
+
+            skeleton.animations.add(
+                'walkLeft',
+                [151,152],
+                walkFPS,
+                true
+            );
+
+            skeleton.animations.add(
+                'standRight',
+                [166],
+                0,
+                false
+            );
+
+            skeleton.animations.add(
+                'walkRight',
+                [167,168],
+                walkFPS,
+                true
+            );
+
+            skeleton.animations.add(
+                'standUp',
+                [182],
+                0,
+                false
+            );
+
+            skeleton.animations.add(
+                'walkUp',
+                [183,184],
+                walkFPS,
+                true
+            );
+
+            skeleton.animations.play('standDown');
+            skeleton.animations.currentAnim.timeLastChange = game.time.now - 100;
         }
     }
 
@@ -70,10 +129,23 @@ Skeletons.prototype.update = function() {
                             skeleton,
                             game.state.states[game.state.current].girl.player.body.center.x - skeleton.body.offset.x - (skeleton.body.width / 2),
                             game.state.states[game.state.current].girl.player.body.center.y - skeleton.body.offset.y - (skeleton.body.height / 2),
-                            Helpers.GetRandom(50,150)
+                            Helpers.GetRandom(150,200)
                         );
                     }
 
+                }
+
+                if (
+                    Helpers.GetDirectionFromVelocity(skeleton)
+                    !=
+                    skeleton.animations.currentAnim.name
+                    &&
+                    game.time.elapsedSince(
+                        skeleton.animations.currentAnim.timeLastChange
+                    ) > 25
+                ) {
+                    skeleton.animations.play(Helpers.GetDirectionFromVelocity(skeleton, 10));
+                    skeleton.animations.currentAnim.timeLastChange = game.time.now
                 }
             }
         });
