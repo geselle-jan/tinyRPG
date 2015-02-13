@@ -60,8 +60,6 @@ PauseMenu.prototype.create = function() {
 		this.clickables[i].events.onInputDown.add(function () {
 			alert(this.data.name);
 		}, this.clickables[i]);
-
-		console.log(this.clickables[i]);
 	}
 
 	this.activeIndicator = game.add.sprite(0, 0, 'boxborderactive');

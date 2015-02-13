@@ -14,7 +14,8 @@ Slimes.prototype.create = function() {
         randY,
         desiredIndex = 105,
         skeleton,
-        slime;
+        slime,
+        walkFPS = 4;
 
     while (i < this.count) {
         randX = Helpers.GetRandom(0,map.width);
@@ -25,6 +26,65 @@ Slimes.prototype.create = function() {
             slime.body.setSize(40,44,12,16);
             slime.health = 2;
             i++;
+
+            slime.animations.add(
+                'standDown',
+                [192],
+                0,
+                false
+            );
+
+            slime.animations.add(
+                'walkDown',
+                [193,194],
+                walkFPS,
+                true
+            );
+
+            slime.animations.add(
+                'standLeft',
+                [208],
+                0,
+                false
+            );
+
+            slime.animations.add(
+                'walkLeft',
+                [209,210],
+                walkFPS,
+                true
+            );
+
+            slime.animations.add(
+                'standRight',
+                [224],
+                0,
+                false
+            );
+
+            slime.animations.add(
+                'walkRight',
+                [225,226],
+                walkFPS,
+                true
+            );
+
+            slime.animations.add(
+                'standUp',
+                [240],
+                0,
+                false
+            );
+
+            slime.animations.add(
+                'walkUp',
+                [241,242],
+                walkFPS,
+                true
+            );
+
+            slime.animations.play('standDown');
+            slime.animations.currentAnim.timeLastChange = game.time.now - 100;
         }
     }
 
@@ -47,10 +107,24 @@ Slimes.prototype.update = function() {
                         slime.body.velocity.x = (Helpers.GetRandom(-800,800) + (slime.body.velocity.x * 120))/121;
                         slime.body.velocity.y = (Helpers.GetRandom(-800,800) + (slime.body.velocity.y * 120))/121;
                     }
+
+                    if (
+                        Helpers.GetDirectionFromVelocity(slime)
+                        !=
+                        slime.animations.currentAnim.name
+                        &&
+                        game.time.elapsedSince(
+                            slime.animations.currentAnim.timeLastChange
+                        ) > 1000
+                    ) {
+                        slime.animations.play(Helpers.GetDirectionFromVelocity(slime, 10));
+                        slime.animations.currentAnim.timeLastChange = game.time.now
+                    }
                 }
             });
 
             game.ui.foeView.updateGroup(this.group);
+
         } else {
             this.group.forEach(function (slime) {
                 slime.body.velocity = slime.body.savedVelocity;
