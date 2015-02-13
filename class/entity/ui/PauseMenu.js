@@ -41,6 +41,7 @@ PauseMenu.prototype.create = function() {
 		this.entries[i].index = i;
 		this.clickables[i].data = this.entries[i];
 		this.clickables[i].inputEnabled = true;
+
 		this.clickables[i].events.onInputOver.add(function () {
 			var that = game.ui.pauseMenu,
 				active = that.activeIndicator,
@@ -49,14 +50,18 @@ PauseMenu.prototype.create = function() {
 			active.cameraOffset.x = 157 * 4;
 			active.cameraOffset.y = that.clickables[index].cameraOffset.y + (3 * 4);
 		}, this.clickables[i]);
+
 		this.clickables[i].events.onInputOut.add(function () {
 			var that = game.ui.pauseMenu,
 				active = that.activeIndicator;
 			active.visible = false;
 		}, this.clickables[i]);
+
 		this.clickables[i].events.onInputDown.add(function () {
 			alert(this.data.name);
 		}, this.clickables[i]);
+
+		console.log(this.clickables[i]);
 	}
 
 	this.activeIndicator = game.add.sprite(0, 0, 'boxborderactive');
@@ -91,6 +96,8 @@ PauseMenu.prototype.update = function() {
 PauseMenu.prototype.hide = function() {
 	this.background.visible = false;
 
+	this.activeIndicator.visible = false;
+
 	for (var i = this.texts.length - 1; i >= 0; i--) {
 		this.texts[i].visible = false;
 		this.clickables[i].visible = false;
@@ -108,6 +115,13 @@ PauseMenu.prototype.show = function() {
 	for (var i = this.texts.length - 1; i >= 0; i--) {
 		this.texts[i].visible = true;
 		this.clickables[i].visible = true;
+		if (
+			this.clickables[i].input.checkPointerOver(
+				game.input.activePointer
+			)
+		) {
+			this.clickables[i].events.onInputOver.dispatch();
+		}
 	}
 
 	game.mode = 'menu';
