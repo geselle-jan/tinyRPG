@@ -8,6 +8,8 @@ TinyRPG.Preloader.prototype = {
 
 		this.load.image('menubg', 'asset/backgrounds/main-menu.png');
 		this.load.image('boxborder', 'asset/sprites/box_border.png');
+		this.load.image('boxborderactive', 'asset/sprites/box_border_active.png');
+		this.load.image('menuclickable', 'asset/sprites/menu_clickable.png');
 		this.load.spritesheet('startbutton', 'asset/sprites/start_button.png', 59, 38);
 		this.load.spritesheet('textbox', 'asset/sprites/textbox.png');
 		this.load.spritesheet('foemarker', 'asset/sprites/foe_marker.png');
@@ -19,7 +21,7 @@ TinyRPG.Preloader.prototype = {
 		this.load.bitmapFont('silkscreen', 'asset/fonts/silkscreen/silkscreen.png', 'asset/fonts/silkscreen/silkscreen.fnt');
 		
 		// add ogg for firefox
-		this.load.audio('menu', ['asset/sound/music/Rolemusic/Straw_Fields/Rolemusic_-_04_-_Yellow_Dust.mp3']);
+		// this.load.audio('menu', ['asset/sound/music/Rolemusic/Straw_Fields/Rolemusic_-_04_-_Yellow_Dust.mp3']);
 
 
 	},
