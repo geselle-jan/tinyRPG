@@ -54,13 +54,21 @@ FoeView.prototype.updateGroup = function(group) {
                 x: game.camera.x + game.camera.width,
                 y: game.camera.y
             },
-            bottomLeft = {
+            bottomLeftOne = {
+                x: game.camera.x + (20*4),
+                y: game.camera.y + game.camera.height - (7*4)
+            },
+            bottomLeftTwo = {
+                x: game.camera.x + (20*4),
+                y: game.camera.y + game.camera.height - (20*4)
+            },
+            bottomLeftThree = {
                 x: game.camera.x,
-                y: game.camera.y + game.camera.height
+                y: game.camera.y + game.camera.height - (20*4)
             },
             bottomRight = {
                 x: game.camera.x + game.camera.width,
-                y: game.camera.y + game.camera.height
+                y: game.camera.y + game.camera.height - (7*4)
             },
             lineOfSight,
             foeMarker,
@@ -77,12 +85,20 @@ FoeView.prototype.updateGroup = function(group) {
                 topRight.x, topRight.y,
                 bottomRight.x, bottomRight.y
             ),
-            new Phaser.Line( // bottom
+            new Phaser.Line( // bottom one
                 bottomRight.x, bottomRight.y,
-                bottomLeft.x, bottomLeft.y
+                bottomLeftOne.x, bottomLeftOne.y
+            ),
+            new Phaser.Line( // bottom two
+                bottomLeftOne.x, bottomLeftOne.y,
+                bottomLeftTwo.x, bottomLeftTwo.y
+            ),
+            new Phaser.Line( // bottom three
+                bottomLeftTwo.x, bottomLeftTwo.y,
+                bottomLeftThree.x, bottomLeftThree.y
             ),
             new Phaser.Line( // left
-                bottomLeft.x, bottomLeft.y,
+                bottomLeftThree.x, bottomLeftThree.y,
                 topLeft.x, topLeft.y
             )
         ];

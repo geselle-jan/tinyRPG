@@ -6,6 +6,7 @@ var Controls = function () {
 
     this.esc            = false;
     this.f              = false;
+    this.e              = false;
 
     this.primary        = false;
     this.secondary      = false;
@@ -40,6 +41,9 @@ Controls.prototype.create = function() {
     );
     this.f              = game.input.keyboard.addKey(
         Phaser.Keyboard.F
+    );
+    this.e              = game.input.keyboard.addKey(
+        Phaser.Keyboard.E
     );
 
     return this;

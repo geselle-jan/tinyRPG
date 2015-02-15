@@ -12,8 +12,8 @@ TinyRPG.Default.prototype = {
         game.ui.foeView.create();
         game.ui.fps = new FPS();
         game.ui.fps.create();
-        game.ui.health = new Health();
-        game.ui.health.create();
+        game.ui.statusInfo = new StatusInfo();
+        game.ui.statusInfo.create();
         game.ui.textbox = new TextBox();
         game.ui.textbox.create();
         game.ui.pauseMenu = new PauseMenu();
@@ -25,7 +25,7 @@ TinyRPG.Default.prototype = {
 		game.controls.update();
 		game.ui.foeView.update();
 		game.ui.fps.update();
-		game.ui.health.update();
+		game.ui.statusInfo.update();
 		game.ui.textbox.update();
 		game.ui.pauseMenu.update();
 		game.ui.crosshair.update();

@@ -45,7 +45,7 @@ TinyRPG.Dungeon.prototype = {
         this.enemiesLeft = game.add.bitmapText(0, 0, 'silkscreen', '--', 32);
         this.enemiesLeft.fixedToCamera = true;
         this.enemiesLeft.cameraOffset.x = 32;
-        this.enemiesLeft.cameraOffset.y = game.camera.height - 32 - this.enemiesLeft.height;
+        this.enemiesLeft.cameraOffset.y = 32;
 
         this.girl = new Girl();
         this.girl.create();
@@ -64,32 +64,12 @@ TinyRPG.Dungeon.prototype = {
         this.girl.update();
 
 
-        if(game.physics.arcade.collide(this.girl.player, collision)) {
-        }
+        game.physics.arcade.collide(this.girl.player, collision);
 
-        game.physics.arcade.overlap(this.girl.bullets, collision, function(shot) {
-            shot.kill();
-        });
+        this.girl.weapons.hitTest(skeletons);
+        this.girl.weapons.hitTest(slimes);
 
-        game.physics.arcade.overlap(this.girl.bullets, skeletons.group, function(shot, skeleton) {
-            shot.kill();
-            skeleton.health--;
-            skeleton.hitTimeout = game.time.now;
-            skeleton.blendMode = PIXI.blendModes.ADD;
-            if (skeleton.health <= 0) {
-                skeleton.kill();
-            }
-        });
-
-        game.physics.arcade.overlap(this.girl.bullets, slimes.group, function(shot, slime) {
-            shot.kill();
-            slime.health--;
-            slime.hitTimeout = game.time.now;
-            slime.blendMode = PIXI.blendModes.ADD;
-            if (slime.health <= 0) {
-                slime.kill();
-            }
-        });
+        this.girl.weapons.collide(collision);
 
         game.physics.arcade.collide(skeletons.group, collision);
         game.physics.arcade.collide(slimes.group, collision);

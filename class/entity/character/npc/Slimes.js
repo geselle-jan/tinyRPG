@@ -23,7 +23,7 @@ Slimes.prototype.create = function() {
             slime = this.group.create(randX * map.tileWidth, randY * map.tileHeight,'tiny16');
             slime.frame = 192;
             slime.body.setSize(40,44,12,16);
-            slime.health = 2;
+            slime.health = 30;
             i++;
 
             slime.animations.add(
@@ -127,14 +127,21 @@ Slimes.prototype.update = function() {
         } else {
             this.group.forEach(function (slime) {
                 slime.body.velocity = slime.body.savedVelocity;
+                if (slime.animations.paused) {
+                    slime.animations.paused = false;
+                }
             });
             this.paused = false;
         }
+
     } else if (!this.paused) {
         this.group.forEach(function (slime) {
             slime.body.savedVelocity = slime.body.velocity;
             slime.body.velocity.x = 0;
             slime.body.velocity.y = 0;
+            if (!slime.animations.paused) {
+                slime.animations.paused = true;
+            }
         });
         this.paused = true;
     }

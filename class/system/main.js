@@ -26,3 +26,7 @@ $(function() {
         }
     });
 })
+
+function toDungeon () {
+	game.state.states.Town.girl.player.position.setTo(2754, 2864);
+}

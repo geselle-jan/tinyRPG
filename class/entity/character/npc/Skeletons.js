@@ -22,7 +22,7 @@ Skeletons.prototype.create = function() {
             skeleton = this.group.create(randX * map.tileWidth, randY * map.tileHeight,'tiny16');
             skeleton.frame = 134;
             skeleton.body.setSize(32,32,16,28);
-            skeleton.health = 5;
+            skeleton.health = 50;
             skeleton.hitTimeout = false;
             i++;
 
@@ -100,6 +100,7 @@ Skeletons.prototype.update = function() {
                 skeleton.hitTimeout = false;
                 skeleton.blendMode = PIXI.blendModes.NORMAL;
             }
+
             if (skeleton.visible && skeleton.inCamera) {
                 var line = new Phaser.Line(
                         game.state.states[game.state.current].girl.player.body.center.x,
@@ -148,9 +149,19 @@ Skeletons.prototype.update = function() {
                     skeleton.animations.currentAnim.timeLastChange = game.time.now
                 }
             }
+
+            if (skeleton.animations.paused) {
+                skeleton.animations.paused = false;
+            }
         });
 
         game.ui.foeView.updateGroup(this.group);
+    } else {
+        this.group.forEach(function (skeleton) {
+            if (!skeleton.animations.paused) {
+                skeleton.animations.paused = true;
+            }
+        });
     }
 
     return this;
