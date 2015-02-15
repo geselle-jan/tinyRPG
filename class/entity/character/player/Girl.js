@@ -26,7 +26,7 @@ Girl.prototype.create = function() {
         game.player.maxMana = 100;
     }
     if (typeof game.player.manaRegeneration == 'undefined') {
-        game.player.manaPerSecond = 300;
+        game.player.manaPerSecond = 3;
     }
     if (typeof game.player.lastManaRegeneration == 'undefined') {
         game.player.lastManaRegeneration = false;
