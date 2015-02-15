@@ -1,5 +1,6 @@
-var PlayerMovement = function (player) {
-    this.player = player;
+var PlayerMovement = function (girl) {
+    this.girl = girl;
+    this.player = this.girl.player;
 
     return this;    
 };
@@ -212,7 +213,7 @@ PlayerMovement.prototype.update = function() {
             if (x ==  0 && y == -1) { angle = 270; }
             if (x ==  1 && y == -1) { angle = 315; }
 
-            if (game.controls.shift.isDown) {
+            if (game.controls.shift.isDown && this.girl.costMana(0.2)) {
                 speed = speed * 2;
             }
         

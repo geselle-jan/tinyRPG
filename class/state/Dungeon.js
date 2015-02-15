@@ -3,7 +3,7 @@ TinyRPG.Dungeon.prototype = {
     create: function(){
         var i,
             enemyCount = 2,
-            enemyTypesCount = 2;
+            enemyTypesCount = 3;
 
         game.mode = 'level';
 
@@ -22,10 +22,13 @@ TinyRPG.Dungeon.prototype = {
 
         enemyCount = Math.round(enemyCount / enemyTypesCount);
 
+        mapJSON = DungeonGenerator.GetTiledJSON();
 
-        game.cache._tilemaps.level.data = DungeonGenerator.GetTiledJSON();
+        game.cache._tilemaps.level.data = mapJSON;
 
         game.physics.startSystem(Phaser.Physics.ARCADE);
+
+        this.grid = new PF.Grid(64, 64, mapJSON.walkableGrid)
 
         game.stage.setBackgroundColor('#140C1C');
 
@@ -41,6 +44,9 @@ TinyRPG.Dungeon.prototype = {
 
         slimes = new Slimes(enemyCount);
         slimes.create();
+
+        bats = new Bats(enemyCount);
+        bats.create();
 
         this.enemiesLeft = game.add.bitmapText(0, 0, 'silkscreen', '--', 32);
         this.enemiesLeft.fixedToCamera = true;
@@ -61,6 +67,8 @@ TinyRPG.Dungeon.prototype = {
 
         slimes.update();
 
+        bats.update();
+
         this.girl.update();
 
 
@@ -68,25 +76,36 @@ TinyRPG.Dungeon.prototype = {
 
         this.girl.weapons.hitTest(skeletons);
         this.girl.weapons.hitTest(slimes);
+        this.girl.weapons.hitTest(bats);
 
         this.girl.weapons.collide(collision);
 
         game.physics.arcade.collide(skeletons.group, collision);
         game.physics.arcade.collide(slimes.group, collision);
+        game.physics.arcade.collide(bats.group, collision);
 
         game.physics.arcade.collide(skeletons.group, skeletons.group);
-        game.physics.arcade.collide(skeletons.group, slimes.group);
         game.physics.arcade.collide(slimes.group, slimes.group);
+        game.physics.arcade.collide(bats.group, bats.group);
+        game.physics.arcade.collide(skeletons.group, slimes.group);
+        game.physics.arcade.collide(skeletons.group, bats.group);
+        game.physics.arcade.collide(slimes.group, bats.group);
 
-        this.enemiesLeft.setText((skeletons.group.length + slimes.group.length - skeletons.group.countDead() - slimes.group.countDead()) + ' enemies left // level ' + game.level);
+        this.enemiesLeft.setText((skeletons.group.length + slimes.group.length + bats.group.length - skeletons.group.countDead() - slimes.group.countDead() - bats.group.countDead()) + ' enemies left // level ' + game.level);
 
-        if ((skeletons.group.length + slimes.group.length - skeletons.group.countDead() - slimes.group.countDead()) == 0) {
+        if ((skeletons.group.length + slimes.group.length + bats.group.length - skeletons.group.countDead() - slimes.group.countDead() - bats.group.countDead()) == 0) {
             game.state.clearCurrentState();
             game.level++;
             this.state.start('Dungeon');
         }
 
-        if(game.physics.arcade.collide(this.girl.player, skeletons.group) || game.physics.arcade.collide(this.girl.player, slimes.group)) {
+        if(
+            game.physics.arcade.collide(this.girl.player, skeletons.group)
+            ||
+            game.physics.arcade.collide(this.girl.player, slimes.group)
+            ||
+            game.physics.arcade.collide(this.girl.player, bats.group)
+        ) {
             game.player.health--;
             this.girl.player.hitTimeout = game.time.now;
             this.girl.player.blendMode = PIXI.blendModes.ADD;
@@ -97,6 +116,8 @@ TinyRPG.Dungeon.prototype = {
                 }
                 game.level = 1;
                 game.player.health = 100;
+                game.player.mana = 100;
+                game.player.xp = 0;
                 game.state.clearCurrentState();
                 this.state.start('MainMenu');
             }

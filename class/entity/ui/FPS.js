@@ -10,9 +10,14 @@ FPS.prototype.create = function() {
 };
 
 FPS.prototype.update = function() {
-    this.text.cameraOffset.x = game.camera.width - 32 - this.text.width;
-    this.text.cameraOffset.y = 32;
-    this.text.setText((game.time.fps || '--') + ' FPS');
+	if (game.time.fps != 60) {
+		this.text.visible = true;
+	    this.text.cameraOffset.x = game.camera.width - 32 - this.text.width;
+	    this.text.cameraOffset.y = 32;
+	    this.text.setText((game.time.fps || '--') + ' FPS');
+	} else {
+		this.text.visible = false;
+	}
 
     return this;
 };

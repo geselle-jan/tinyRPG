@@ -9,7 +9,7 @@ Girl.prototype.create = function() {
     this.weapons = new Weapons();
     this.weapons.create();
     this.player = game.add.sprite(2*64, 2*64,'tiny16');
-    this.movement = new PlayerMovement(this.player);
+    this.movement = new PlayerMovement(this);
     if (typeof game.player == 'undefined') {
         game.player = {};
     }
@@ -22,6 +22,16 @@ Girl.prototype.create = function() {
     if (typeof game.player.xp == 'undefined') {
         game.player.xp = 0;
     }
+    if (typeof game.player.maxMana == 'undefined') {
+        game.player.maxMana = 100;
+    }
+    if (typeof game.player.manaRegeneration == 'undefined') {
+        game.player.manaPerSecond = 300;
+    }
+    if (typeof game.player.lastManaRegeneration == 'undefined') {
+        game.player.lastManaRegeneration = false;
+    }
+
     game.physics.enable(this.player);
     this.player.anchor.set(1);
     this.player.body.setSize(32,32,-16,0);
@@ -61,6 +71,8 @@ Girl.prototype.create = function() {
 
 Girl.prototype.update = function() {
 
+    this.regenerateMana();
+
     this.movement.update();
 
     if (game.mode == 'level') {
@@ -76,3 +88,46 @@ Girl.prototype.update = function() {
 
     return this;
 };
+
+Girl.prototype.costMana = function(cost) {
+    if (game.player.mana - cost >= 0) {
+        game.player.mana = game.player.mana - cost;
+        return true;
+    }
+    return false;
+};
+
+Girl.prototype.regenerateMana = function() {
+    if (game.mode == 'level') {
+        if (game.player.lastManaRegeneration) {
+            game.player.mana += game.player.manaPerSecond * game.time.elapsedSecondsSince(
+                game.player.lastManaRegeneration
+            );
+
+            if (game.player.mana > game.player.maxMana) {
+                game.player.mana = game.player.maxMana;
+            }
+            if (game.player.mana < 0) {
+                game.player.mana = 0;
+            }
+        }
+        game.player.lastManaRegeneration = game.time.now;
+    } else {
+        game.player.lastManaRegeneration = false;
+    }
+
+    return false;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+

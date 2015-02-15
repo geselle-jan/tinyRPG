@@ -7,8 +7,13 @@ Weapons.prototype.fireballs.blue.medium.create = function(weapons) {
     var that = this;
 
     this.damage = {
-        primary: 2,
+        primary: 4,
         secondary: 5
+    };
+
+    this.cost = {
+        primary: 0.75,
+        secondary: 35
     };
 
     this.fireCooldown = game.time.now;
@@ -31,9 +36,16 @@ Weapons.prototype.fireballs.blue.medium.create = function(weapons) {
 };
 
 Weapons.prototype.fireballs.blue.medium.activeUpdatePrimary = function (weapons) {
-    this.player = game.state.states[game.state.current].girl.player;
+    this.girl = game.state.states[game.state.current].girl;
+    this.player = this.girl.player;
 
-    if (game.time.elapsedSince(this.fireCooldown) > 40 && this.bullets.countDead() > 0) {
+    if (
+        game.time.elapsedSince(this.fireCooldown) > 40
+        &&
+        this.bullets.countDead() > 0
+        &&
+        this.girl.costMana(this.cost.primary)
+    ) {
 
         var bullet = this.bullets.getFirstDead();
 
@@ -63,9 +75,16 @@ Weapons.prototype.fireballs.blue.medium.activeUpdatePrimary = function (weapons)
 };
 
 Weapons.prototype.fireballs.blue.medium.activeUpdateSecondary = function (weapons) {
-    this.player = game.state.states[game.state.current].girl.player;
+    this.girl = game.state.states[game.state.current].girl;
+    this.player = this.girl.player;
 
-    if (game.time.elapsedSince(this.fireCooldown) > 500 && this.bullets.countDead() > 0) {
+    if (
+        game.time.elapsedSince(this.fireCooldown) > 500
+        &&
+        this.bullets.countDead() > 0
+        &&
+        this.girl.costMana(this.cost.secondary)
+    ) {
 
         var amount = 36,
             start = Math.PI * -1,

@@ -239,6 +239,25 @@ var DungeonGenerator = {
 
         return options;
     },
+    GetWalkableGrid: function (json) {
+        var width = json.layers[0].width,
+            layer = json.layers[0].data,
+            walkableIndex = 105,
+            walkableGrid = [],
+            currentRow = 0,
+            walkable;
+
+        for (var i = 0; i < layer.length; i++) {
+            currentRow = Math.floor(i / width);
+            if (!walkableGrid[currentRow]) {
+                walkableGrid[currentRow] = [];
+            }
+            walkable = layer[i] == walkableIndex ? 0 : 1;
+            walkableGrid[currentRow].push(walkable);
+        }
+
+        return walkableGrid;
+    },
     GetTiledJSON: function (options) {
         var defaults = this.GetOptionsByLevel(game.level);
         this.options = $.extend({}, defaults, options || {});
@@ -333,6 +352,7 @@ var DungeonGenerator = {
                 }
             }
         }
+        json.walkableGrid = this.GetWalkableGrid(json);
         return json;
     }
 }

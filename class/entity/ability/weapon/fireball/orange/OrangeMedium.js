@@ -11,6 +11,11 @@ Weapons.prototype.fireballs.orange.medium.create = function(weapons) {
         secondary: 20
     };
 
+    this.cost = {
+        primary: 2,
+        secondary: 15
+    };
+
     this.fireCooldown = game.time.now;
 
     this.bullets = weapons.makeBullets(50);
@@ -31,9 +36,16 @@ Weapons.prototype.fireballs.orange.medium.create = function(weapons) {
 };
 
 Weapons.prototype.fireballs.orange.medium.activeUpdatePrimary = function (weapons) {
-    this.player = game.state.states[game.state.current].girl.player;
+    this.girl = game.state.states[game.state.current].girl;
+    this.player = this.girl.player;
 
-    if (game.time.elapsedSince(this.fireCooldown) > 500 && this.bullets.countDead() > 0) {
+    if (
+        game.time.elapsedSince(this.fireCooldown) > 500
+        &&
+        this.bullets.countDead() > 0
+        &&
+        this.girl.costMana(this.cost.primary)
+    ) {
 
         var bullet = this.bullets.getFirstDead();
         bullet.reset(this.player.body.center.x, this.player.body.center.y - 16);
@@ -51,9 +63,16 @@ Weapons.prototype.fireballs.orange.medium.activeUpdatePrimary = function (weapon
 };
 
 Weapons.prototype.fireballs.orange.medium.activeUpdateSecondary = function (weapons) {
-    this.player = game.state.states[game.state.current].girl.player;
+    this.girl = game.state.states[game.state.current].girl;
+    this.player = this.girl.player;
 
-    if (game.time.elapsedSince(this.fireCooldown) > 500 && this.bullets.countDead() > 0) {
+    if (
+        game.time.elapsedSince(this.fireCooldown) > 500
+        &&
+        this.bullets.countDead() > 0
+        &&
+        this.girl.costMana(this.cost.secondary)
+    ) {
 
         for (var i = 0; i < 5; i++) {
             var bullet = this.bullets.getFirstDead();
@@ -89,7 +108,6 @@ Weapons.prototype.fireballs.orange.medium.hit = function(shot, enemy) {
     enemy.hitTimeout = game.time.now;
     enemy.blendMode = PIXI.blendModes.ADD;
     enemy.damage(shot.weapon.damage[shot.attack]);
-    enemy.damage(shot.weapon.damage.secondary);
 };
 
 Weapons.prototype.fireballs.orange.medium.collide = function (collision) {
