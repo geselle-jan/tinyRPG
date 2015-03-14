@@ -2,10 +2,10 @@ TinyRPG.Default = (game) ->
 
 TinyRPG.Default.prototype =
     create: ->
-        if !game.controls
+        unless game.controls?
             game.controls = new Controls
             game.controls.create()
-        game.ui = if game.ui then game.ui else {}
+        game.ui ?= {}
         game.ui.foeView = new FoeView
         game.ui.fps = new FPS
         game.ui.statusInfo = new StatusInfo

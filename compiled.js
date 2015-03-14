@@ -2327,11 +2327,13 @@ TinyRPG.Default = function(game) {};
 
 TinyRPG.Default.prototype = {
   create: function() {
-    if (!game.controls) {
+    if (game.controls == null) {
       game.controls = new Controls;
       game.controls.create();
     }
-    game.ui = game.ui ? game.ui : {};
+    if (game.ui == null) {
+      game.ui = {};
+    }
     game.ui.foeView = new FoeView;
     game.ui.fps = new FPS;
     game.ui.statusInfo = new StatusInfo;
