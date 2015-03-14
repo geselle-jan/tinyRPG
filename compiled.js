@@ -525,17 +525,28 @@ Blank = (function() {
     this.x = 0;
     this.y = 0;
     this.scale = 4;
-    this.bmd = game.add.bitmapData(this.width, this.height);
-    this.bmd.context.fillStyle = this.color;
-    this.bmd.context.fillRect(0, 0, this.width, this.height);
-    this.sprite = game.add.sprite(0, 0, this.bmd);
-    this.sprite.scale.setTo(this.scale);
-    this.sprite.fixedToCamera = true;
-    this.sprite.cameraOffset.x = this.x * this.scale;
-    this.sprite.cameraOffset.y = this.y * this.scale;
+    this.sprite = this.createSprite();
     this.sprite.visible = visible;
     this.sprite.alpha = visible ? 1 : 0;
   }
+
+  Blank.prototype.createBitmapData = function() {
+    var bitmapData;
+    bitmapData = game.add.bitmapData(this.width, this.height);
+    bitmapData.context.fillStyle = this.color;
+    bitmapData.context.fillRect(0, 0, this.width, this.height);
+    return bitmapData;
+  };
+
+  Blank.prototype.createSprite = function() {
+    var sprite;
+    sprite = game.add.sprite(0, 0, this.createBitmapData());
+    sprite.scale.setTo(this.scale);
+    sprite.fixedToCamera = true;
+    sprite.cameraOffset.x = this.x * this.scale;
+    sprite.cameraOffset.y = this.y * this.scale;
+    return sprite;
+  };
 
   Blank.prototype.isFading = function() {
     var ref;
@@ -673,31 +684,31 @@ Box = (function() {
 })();
 
 StatusInfo = (function() {
+  StatusInfo.prototype.barData = {
+    health: {
+      color: '#D04648',
+      x: 39,
+      y: 155
+    },
+    mana: {
+      color: '#597DCE',
+      x: 111,
+      y: 155
+    },
+    xp: {
+      color: '#6CAA2C',
+      x: 183,
+      y: 155
+    }
+  };
+
   function StatusInfo(options) {
-    var barData;
     if (options == null) {
       options = {};
     }
     this.scale = 4;
     this.background = this.createBackground();
-    barData = {
-      health: {
-        color: '#D04648',
-        x: 39,
-        y: 155
-      },
-      mana: {
-        color: '#597DCE',
-        x: 111,
-        y: 155
-      },
-      xp: {
-        color: '#6CAA2C',
-        x: 183,
-        y: 155
-      }
-    };
-    this.createBars(barData);
+    this.createBars();
     this.currentWeapon = this.createCurrentWeapon();
   }
 
@@ -741,11 +752,12 @@ StatusInfo = (function() {
     return bar;
   };
 
-  StatusInfo.prototype.createBars = function(data) {
-    var name, params, results;
+  StatusInfo.prototype.createBars = function() {
+    var name, params, ref, results;
+    ref = this.barData;
     results = [];
-    for (name in data) {
-      params = data[name];
+    for (name in ref) {
+      params = ref[name];
       results.push(this.createBar(name, params.color, params.x, params.y));
     }
     return results;
@@ -1100,16 +1112,22 @@ FoeView = (function() {
     this.height = (ref1 = options.height) != null ? ref1 : 2;
     this.scale = (ref2 = options.scale) != null ? ref2 : 4;
     this.maxFoes = (ref3 = options.maxFoes) != null ? ref3 : 100;
-    this.foeMarkers = game.add.group();
-    this.foeMarkers.createMultiple(this.maxFoes, 'foemarker');
-    this.foeMarkers.setAll('anchor.x', 0.5);
-    this.foeMarkers.setAll('anchor.y', 0.5);
-    this.foeMarkers.setAll('scale.x', this.scale);
-    this.foeMarkers.setAll('scale.y', this.scale);
-    this.foeMarkers.setAll('fixedToCamera', true);
+    this.foeMarkers = this.createFoeMarkers();
     this.state = game.state.states[game.state.current];
     this.player = (ref4 = this.state.girl) != null ? ref4.player : void 0;
   }
+
+  FoeView.prototype.createFoeMarkers = function() {
+    var markers;
+    markers = game.add.group();
+    markers.createMultiple(this.maxFoes, 'foemarker');
+    markers.setAll('anchor.x', 0.5);
+    markers.setAll('anchor.y', 0.5);
+    markers.setAll('scale.x', this.scale);
+    markers.setAll('scale.y', this.scale);
+    markers.setAll('fixedToCamera', true);
+    return markers;
+  };
 
   FoeView.prototype.update = function() {
     if (game.mode === 'level') {

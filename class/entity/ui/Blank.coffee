@@ -9,16 +9,23 @@ class Blank
         @x = 0
         @y = 0
         @scale = 4
-        @bmd = game.add.bitmapData @width, @height
-        @bmd.context.fillStyle = @color
-        @bmd.context.fillRect 0, 0, @width, @height
-        @sprite = game.add.sprite 0, 0, @bmd
-        @sprite.scale.setTo @scale
-        @sprite.fixedToCamera = yes
-        @sprite.cameraOffset.x = @x * @scale
-        @sprite.cameraOffset.y = @y * @scale
+        @sprite = @createSprite()
         @sprite.visible = visible
         @sprite.alpha = if visible then 1 else 0
+
+    createBitmapData: ->
+        bitmapData = game.add.bitmapData @width, @height
+        bitmapData.context.fillStyle = @color
+        bitmapData.context.fillRect 0, 0, @width, @height
+        bitmapData
+
+    createSprite: ->
+        sprite = game.add.sprite 0, 0, @createBitmapData()
+        sprite.scale.setTo @scale
+        sprite.fixedToCamera = yes
+        sprite.cameraOffset.x = @x * @scale
+        sprite.cameraOffset.y = @y * @scale
+        sprite
 
     isFading: ->
         0 < @sprite.alpha < 1

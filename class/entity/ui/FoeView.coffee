@@ -5,17 +5,19 @@ class FoeView
         @height = options.height ? 2
         @scale = options.scale ? 4
         @maxFoes = options.maxFoes ? 100
-
-        @foeMarkers = game.add.group()
-        @foeMarkers.createMultiple @maxFoes, 'foemarker'
-        @foeMarkers.setAll 'anchor.x', 0.5
-        @foeMarkers.setAll 'anchor.y', 0.5
-        @foeMarkers.setAll 'scale.x', @scale
-        @foeMarkers.setAll 'scale.y', @scale
-        @foeMarkers.setAll 'fixedToCamera', true
-
+        @foeMarkers = @createFoeMarkers()
         @state = game.state.states[game.state.current]
         @player = @state.girl?.player
+
+    createFoeMarkers: ->
+        markers = game.add.group()
+        markers.createMultiple @maxFoes, 'foemarker'
+        markers.setAll 'anchor.x', 0.5
+        markers.setAll 'anchor.y', 0.5
+        markers.setAll 'scale.x', @scale
+        markers.setAll 'scale.y', @scale
+        markers.setAll 'fixedToCamera', yes
+        markers
 
     update: ->
         if game.mode is 'level'

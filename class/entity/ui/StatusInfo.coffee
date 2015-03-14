@@ -1,22 +1,23 @@
 class StatusInfo
 
+    barData:
+        health:
+            color: '#D04648'
+            x: 39
+            y: 155
+        mana:
+            color: '#597DCE'
+            x: 111
+            y: 155
+        xp:
+            color: '#6CAA2C'
+            x: 183
+            y: 155
+
     constructor: (options = {}) ->
         @scale = 4
         @background = @createBackground()
-        barData =
-            health:
-                color: '#D04648'
-                x: 39
-                y: 155
-            mana:
-                color: '#597DCE'
-                x: 111
-                y: 155
-            xp:
-                color: '#6CAA2C'
-                x: 183
-                y: 155
-        @createBars barData
+        @createBars()
         @currentWeapon = @createCurrentWeapon()
 
     createBackground: ->
@@ -51,8 +52,8 @@ class StatusInfo
         bar.visible = no
         bar
 
-    createBars: (data) ->
-        for name, params of data
+    createBars: ->
+        for name, params of @barData
             @createBar name, params.color, params.x, params.y
 
     show: ->
