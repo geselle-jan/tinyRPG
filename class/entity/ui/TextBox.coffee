@@ -2,11 +2,12 @@ TextBox = ->
     this
 
 TextBox::create = ->
-    @background = new Box(
+    @box = new Box(
         width: 224
         height: 48
         x: 32
         y: game.camera.height - 48 * 4 - 32)
+    @background = @box.sprite
     @text = game.add.bitmapText(0, 0, 'silkscreen', '', 32)
     @text.fixedToCamera = true
     @text.cameraOffset.x = 56

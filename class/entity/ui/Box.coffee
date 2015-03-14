@@ -1,34 +1,60 @@
-Box = (options) ->
-    defaultOptions = 
-        color: '#597dce'
-        width: 16
-        height: 16
-        x: 0
-        y: 0
-        scale: 4
-    if typeof options == 'object'
-        options = $.extend(defaultOptions, options)
-    else
-        options = defaultOptions
-    @options = options
-    @topLeft = new (Phaser.Rectangle)(0, 0, 5, 5)
-    @topRight = new (Phaser.Rectangle)(4, 0, 5, 5)
-    @bottomRight = new (Phaser.Rectangle)(4, 4, 5, 5)
-    @bottomLeft = new (Phaser.Rectangle)(0, 4, 5, 5)
-    @bmd = game.add.bitmapData(@options.width, @options.height)
-    @bmd.context.fillStyle = @options.color
-    @bmd.context.fillRect 5, 5, @options.width - 10, @options.height - 10
-    @bmd.copyRect 'boxborder', @topLeft, 0, 0
-    @bmd.copyRect 'boxborder', @topRight, @options.width - 5, 0
-    @bmd.copyRect 'boxborder', @bottomRight, @options.width - 5, @options.height - 5
-    @bmd.copyRect 'boxborder', @bottomLeft, 0, @options.height - 5
-    @bmd.copy 'boxborder', 4, 0, 1, 5, 5, 0, @options.width - 10, 5
-    @bmd.copy 'boxborder', 4, 4, 1, 5, 5, @options.height - 5, @options.width - 10, 5
-    @bmd.copy 'boxborder', 0, 4, 5, 1, 0, 5, 5, @options.height - 10
-    @bmd.copy 'boxborder', 4, 4, 5, 1, @options.width - 5, 5, 5, @options.height - 10
-    @sprite = game.add.sprite(0, 0, @bmd)
-    @sprite.scale.setTo @options.scale
-    @sprite.fixedToCamera = true
-    @sprite.cameraOffset.x = @options.x
-    @sprite.cameraOffset.y = @options.y
-    @sprite
+class Box
+
+    constructor: (options = {}) ->
+        @color = options.color ? '#597dce'
+        @width = options.width ? 16
+        @height = options.height ? 16
+        @x = options.x ? 0
+        @y = options.y ? 0
+        @scale = options.scale ? 4
+        @asset = 'boxborder'
+        @sprite = @createSprite()
+
+    createCorners: ->
+        topLeft: new Phaser.Rectangle 0, 0, 5, 5
+        topRight: new Phaser.Rectangle 4, 0, 5, 5
+        bottomRight: new Phaser.Rectangle 4, 4, 5, 5
+        bottomLeft: new Phaser.Rectangle 0, 4, 5, 5
+
+    renderBackground: (bitmapData) ->
+        bitmapData.context.fillRect 5, 5, @width - 10, @height - 10
+        bitmapData
+
+    renderCorners: (bitmapData) ->
+        c = @createCorners()
+        bitmapData.copyRect @asset, c.topLeft, 0, 0
+        bitmapData.copyRect @asset, c.topRight, @width - 5, 0
+        bitmapData.copyRect @asset, c.bottomRight, @width - 5, @height - 5
+        bitmapData.copyRect @asset, c.bottomLeft, 0, @height - 5
+        bitmapData
+
+    renderBorders: (bitmapData) ->
+        bitmapData.copy @asset, 4, 0, 1, 5, 5, 0, @width - 10, 5
+        bitmapData.copy @asset, 4, 4, 1, 5, 5, @height - 5, @width - 10, 5
+        bitmapData.copy @asset, 0, 4, 5, 1, 0, 5, 5, @height - 10
+        bitmapData.copy @asset, 4, 4, 5, 1, @width - 5, 5, 5, @height - 10
+        bitmapData
+
+    createBitmapData: ->
+        bitmapData = game.add.bitmapData @width, @height
+        bitmapData.context.fillStyle = @color
+        @renderBackground bitmapData
+        @renderCorners bitmapData
+        @renderBorders bitmapData
+        bitmapData
+
+    createSprite: ->
+        bmd = @createBitmapData()
+        sprite = game.add.sprite 0, 0, bmd
+        sprite.scale.setTo @scale
+        sprite.fixedToCamera = yes
+        sprite.cameraOffset.x = @x
+        sprite.cameraOffset.y = @y
+        sprite
+
+
+
+
+
+
+

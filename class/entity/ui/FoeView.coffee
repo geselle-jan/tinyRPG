@@ -1,81 +1,80 @@
-FoeView = (options) ->
-    defaultOptions = 
-        color: '#ff0000'
-        width: 2
-        height: 2
-        scale: 4
-        maxFoes: 100
-    if typeof options == 'object'
-        options = $.extend(defaultOptions, options)
-    else
-        options = defaultOptions
-    @options = options
-    this
+class FoeView
 
-FoeView::create = ->
-    @foeMarkers = game.add.group()
-    @foeMarkers.createMultiple @options.maxFoes, 'foemarker'
-    @foeMarkers.setAll 'anchor.x', 0.5
-    @foeMarkers.setAll 'anchor.y', 0.5
-    @foeMarkers.setAll 'scale.x', @options.scale
-    @foeMarkers.setAll 'scale.y', @options.scale
-    @foeMarkers.setAll 'fixedToCamera', true
-    this
+    constructor: (options = {}) ->
+        @width = options.width ? 2
+        @height = options.height ? 2
+        @scale = options.scale ? 4
+        @maxFoes = options.maxFoes ? 100
 
-FoeView::update = ->
-    if game.mode == 'level'
-        @foeMarkers.forEachAlive ((foeMarker) ->
-            foeMarker.kill()
-            return
-        ), this
-    this
+        @foeMarkers = game.add.group()
+        @foeMarkers.createMultiple @maxFoes, 'foemarker'
+        @foeMarkers.setAll 'anchor.x', 0.5
+        @foeMarkers.setAll 'anchor.y', 0.5
+        @foeMarkers.setAll 'scale.x', @scale
+        @foeMarkers.setAll 'scale.y', @scale
+        @foeMarkers.setAll 'fixedToCamera', true
 
-FoeView::updateGroup = (group) ->
-    if game.controls.f.isDown and game.mode == 'level'
-        topLeft = 
-            x: game.camera.x
-            y: game.camera.y
-        topRight = 
-            x: game.camera.x + game.camera.width
-            y: game.camera.y
-        bottomLeftOne = 
-            x: game.camera.x + 20 * 4
-            y: game.camera.y + game.camera.height - 7 * 4
-        bottomLeftTwo = 
-            x: game.camera.x + 20 * 4
-            y: game.camera.y + game.camera.height - 20 * 4
-        bottomLeftThree = 
-            x: game.camera.x
-            y: game.camera.y + game.camera.height - 20 * 4
-        bottomRight = 
-            x: game.camera.x + game.camera.width
-            y: game.camera.y + game.camera.height - 7 * 4
-        lineOfSight = undefined
-        foeMarker = undefined
-        temp = undefined
-        player = game.state.states[game.state.current].girl.player
-        intersection = false
-        @borders = [
-            new (Phaser.Line)(topLeft.x, topLeft.y, topRight.x, topRight.y)
-            new (Phaser.Line)(topRight.x, topRight.y, bottomRight.x, bottomRight.y)
-            new (Phaser.Line)(bottomRight.x, bottomRight.y, bottomLeftOne.x, bottomLeftOne.y)
-            new (Phaser.Line)(bottomLeftOne.x, bottomLeftOne.y, bottomLeftTwo.x, bottomLeftTwo.y)
-            new (Phaser.Line)(bottomLeftTwo.x, bottomLeftTwo.y, bottomLeftThree.x, bottomLeftThree.y)
-            new (Phaser.Line)(bottomLeftThree.x, bottomLeftThree.y, topLeft.x, topLeft.y)
+        @state = game.state.states[game.state.current]
+        @player = @state.girl?.player
+
+    update: ->
+        if game.mode is 'level'
+            @foeMarkers.forEachAlive ((foeMarker) ->
+                foeMarker.kill()
+            ), @
+        @
+
+    getInterfaceCorners: ->
+        c = game.camera
+        topLeft:
+            x: c.x
+            y: c.y
+        topRight:
+            x: c.x + c.width
+            y: c.y
+        bottomLeftOne:
+            x: c.x + 20 * @scale
+            y: c.y + c.height - 7 * @scale
+        bottomLeftTwo:
+            x: c.x + 20 * @scale
+            y: c.y + c.height - 20 * @scale
+        bottomLeftThree:
+            x: c.x
+            y: c.y + c.height - 20 * @scale
+        bottomRight:
+            x: c.x + c.width
+            y: c.y + c.height - 7 * @scale
+
+    getInterfaceBorders: ->
+        i = @getInterfaceCorners()
+        [
+            new (Phaser.Line)(i.topLeft.x, i.topLeft.y, i.topRight.x, i.topRight.y)
+            new (Phaser.Line)(i.topRight.x, i.topRight.y, i.bottomRight.x, i.bottomRight.y)
+            new (Phaser.Line)(i.bottomRight.x, i.bottomRight.y, i.bottomLeftOne.x, i.bottomLeftOne.y)
+            new (Phaser.Line)(i.bottomLeftOne.x, i.bottomLeftOne.y, i.bottomLeftTwo.x, i.bottomLeftTwo.y)
+            new (Phaser.Line)(i.bottomLeftTwo.x, i.bottomLeftTwo.y, i.bottomLeftThree.x, i.bottomLeftThree.y)
+            new (Phaser.Line)(i.bottomLeftThree.x, i.bottomLeftThree.y, i.topLeft.x, i.topLeft.y)
         ]
-        group.forEachAlive ((foe) ->
-            if @foeMarkers.countDead() > 0
-                lineOfSight = new (Phaser.Line)(player.body.center.x, player.body.center.y, foe.body.center.x, foe.body.center.y)
-                i = @borders.length - 1
-                while i >= 0
-                    temp = lineOfSight.intersects(@borders[i])
-                    intersection = if temp then temp else intersection
-                    i--
-                if intersection
-                    foeMarker = @foeMarkers.getFirstDead()
-                    foeMarker.reset()
-                    foeMarker.cameraOffset.x = intersection.x - game.camera.x
-                    foeMarker.cameraOffset.y = intersection.y - game.camera.y
-            return
-        ), this
-    this
+
+    getLineOfSight: (foe)->
+        p = @player.body.center
+        f = foe.body.center
+        new Phaser.Line p.x, p.y, f.x, f.y
+
+    updateGroup: (group) ->
+        if game.controls.f.isDown and game.mode == 'level'
+            borders = @getInterfaceBorders()
+            group.forEachAlive ((foe) ->
+                if @foeMarkers.countDead() > 0
+                    lineOfSight = @getLineOfSight foe
+                    for border in borders
+                        temp = lineOfSight.intersects(border)
+                        intersection = if temp then temp else intersection
+                    if intersection
+                        foeMarker = @foeMarkers.getFirstDead()
+                        foeMarker.reset()
+                        foeMarker.cameraOffset.x = intersection.x - game.camera.x
+                        foeMarker.cameraOffset.y = intersection.y - game.camera.y
+                return
+            ), @
+        @

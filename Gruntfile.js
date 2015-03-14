@@ -29,6 +29,7 @@ module.exports = function(grunt) {
                 'class/entity/ability/weapon/fireball/orange/OrangeMedium.coffee',
                 'class/entity/ability/weapon/fireball/Blue.coffee',
                 'class/entity/ability/weapon/fireball/blue/BlueMedium.coffee',
+                'class/entity/character/Character.coffee',
                 'class/entity/character/npc/Skeletons.coffee',
                 'class/entity/character/npc/Slimes.coffee',
                 'class/entity/character/npc/Bats.coffee',

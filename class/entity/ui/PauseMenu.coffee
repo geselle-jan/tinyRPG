@@ -8,11 +8,12 @@ PauseMenu = ->
 
 PauseMenu::create = ->
     @boxHeight = 10 + @entries.length - 1 + @entries.length * 13
-    @background = new Box(
+    @box = new Box(
         width: 73
         height: @boxHeight
         x: game.camera.width - 73 * 4 - 32
         y: game.camera.height - @boxHeight * 4 - 32)
+    @background = @box.sprite
     @texts = []
     @clickables = []
     i = @entries.length - 1

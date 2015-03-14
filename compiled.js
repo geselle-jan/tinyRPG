@@ -1,4 +1,4 @@
-var Bats, Blank, Box, Controls, Crosshair, DungeonGenerator, FPS, FoeView, Girl, Helpers, PauseMenu, PlayerMovement, Skeletons, Slimes, StatusInfo, TextBox, TinyRPG, Weapons, game, params, toDungeon;
+var Bats, Blank, Box, Character, Controls, Crosshair, DungeonGenerator, FPS, FoeView, Girl, Helpers, PauseMenu, PlayerMovement, Skeletons, Slimes, StatusInfo, TextBox, TinyRPG, Weapons, game, params, toDungeon;
 
 Helpers = {
   GetRandom: function(low, high) {
@@ -599,44 +599,78 @@ Blank = (function() {
 
 })();
 
-Box = function(options) {
-  var defaultOptions;
-  defaultOptions = {
-    color: '#597dce',
-    width: 16,
-    height: 16,
-    x: 0,
-    y: 0,
-    scale: 4
-  };
-  if (typeof options === 'object') {
-    options = $.extend(defaultOptions, options);
-  } else {
-    options = defaultOptions;
+Box = (function() {
+  function Box(options) {
+    var ref, ref1, ref2, ref3, ref4, ref5;
+    if (options == null) {
+      options = {};
+    }
+    this.color = (ref = options.color) != null ? ref : '#597dce';
+    this.width = (ref1 = options.width) != null ? ref1 : 16;
+    this.height = (ref2 = options.height) != null ? ref2 : 16;
+    this.x = (ref3 = options.x) != null ? ref3 : 0;
+    this.y = (ref4 = options.y) != null ? ref4 : 0;
+    this.scale = (ref5 = options.scale) != null ? ref5 : 4;
+    this.asset = 'boxborder';
+    this.sprite = this.createSprite();
   }
-  this.options = options;
-  this.topLeft = new Phaser.Rectangle(0, 0, 5, 5);
-  this.topRight = new Phaser.Rectangle(4, 0, 5, 5);
-  this.bottomRight = new Phaser.Rectangle(4, 4, 5, 5);
-  this.bottomLeft = new Phaser.Rectangle(0, 4, 5, 5);
-  this.bmd = game.add.bitmapData(this.options.width, this.options.height);
-  this.bmd.context.fillStyle = this.options.color;
-  this.bmd.context.fillRect(5, 5, this.options.width - 10, this.options.height - 10);
-  this.bmd.copyRect('boxborder', this.topLeft, 0, 0);
-  this.bmd.copyRect('boxborder', this.topRight, this.options.width - 5, 0);
-  this.bmd.copyRect('boxborder', this.bottomRight, this.options.width - 5, this.options.height - 5);
-  this.bmd.copyRect('boxborder', this.bottomLeft, 0, this.options.height - 5);
-  this.bmd.copy('boxborder', 4, 0, 1, 5, 5, 0, this.options.width - 10, 5);
-  this.bmd.copy('boxborder', 4, 4, 1, 5, 5, this.options.height - 5, this.options.width - 10, 5);
-  this.bmd.copy('boxborder', 0, 4, 5, 1, 0, 5, 5, this.options.height - 10);
-  this.bmd.copy('boxborder', 4, 4, 5, 1, this.options.width - 5, 5, 5, this.options.height - 10);
-  this.sprite = game.add.sprite(0, 0, this.bmd);
-  this.sprite.scale.setTo(this.options.scale);
-  this.sprite.fixedToCamera = true;
-  this.sprite.cameraOffset.x = this.options.x;
-  this.sprite.cameraOffset.y = this.options.y;
-  return this.sprite;
-};
+
+  Box.prototype.createCorners = function() {
+    return {
+      topLeft: new Phaser.Rectangle(0, 0, 5, 5),
+      topRight: new Phaser.Rectangle(4, 0, 5, 5),
+      bottomRight: new Phaser.Rectangle(4, 4, 5, 5),
+      bottomLeft: new Phaser.Rectangle(0, 4, 5, 5)
+    };
+  };
+
+  Box.prototype.renderBackground = function(bitmapData) {
+    bitmapData.context.fillRect(5, 5, this.width - 10, this.height - 10);
+    return bitmapData;
+  };
+
+  Box.prototype.renderCorners = function(bitmapData) {
+    var c;
+    c = this.createCorners();
+    bitmapData.copyRect(this.asset, c.topLeft, 0, 0);
+    bitmapData.copyRect(this.asset, c.topRight, this.width - 5, 0);
+    bitmapData.copyRect(this.asset, c.bottomRight, this.width - 5, this.height - 5);
+    bitmapData.copyRect(this.asset, c.bottomLeft, 0, this.height - 5);
+    return bitmapData;
+  };
+
+  Box.prototype.renderBorders = function(bitmapData) {
+    bitmapData.copy(this.asset, 4, 0, 1, 5, 5, 0, this.width - 10, 5);
+    bitmapData.copy(this.asset, 4, 4, 1, 5, 5, this.height - 5, this.width - 10, 5);
+    bitmapData.copy(this.asset, 0, 4, 5, 1, 0, 5, 5, this.height - 10);
+    bitmapData.copy(this.asset, 4, 4, 5, 1, this.width - 5, 5, 5, this.height - 10);
+    return bitmapData;
+  };
+
+  Box.prototype.createBitmapData = function() {
+    var bitmapData;
+    bitmapData = game.add.bitmapData(this.width, this.height);
+    bitmapData.context.fillStyle = this.color;
+    this.renderBackground(bitmapData);
+    this.renderCorners(bitmapData);
+    this.renderBorders(bitmapData);
+    return bitmapData;
+  };
+
+  Box.prototype.createSprite = function() {
+    var bmd, sprite;
+    bmd = this.createBitmapData();
+    sprite = game.add.sprite(0, 0, bmd);
+    sprite.scale.setTo(this.scale);
+    sprite.fixedToCamera = true;
+    sprite.cameraOffset.x = this.x;
+    sprite.cameraOffset.y = this.y;
+    return sprite;
+  };
+
+  return Box;
+
+})();
 
 StatusInfo = function() {
   return this;
@@ -694,39 +728,40 @@ StatusInfo.prototype.makeBar = function(name, color, x, y) {
   return this;
 };
 
-FPS = function() {
-  return this;
-};
-
-FPS.prototype.create = function() {
-  this.text = game.add.bitmapText(0, 0, 'silkscreen', '', 32);
-  this.text.fixedToCamera = true;
-  return this;
-};
-
-FPS.prototype.update = function() {
-  if (game.time.fps !== 60) {
-    this.text.visible = true;
-    this.text.cameraOffset.x = game.camera.width - 32 - this.text.width;
-    this.text.cameraOffset.y = 32;
-    this.text.setText((game.time.fps || '--') + ' FPS');
-  } else {
-    this.text.visible = false;
+FPS = (function() {
+  function FPS() {
+    this.text = game.add.bitmapText(0, 0, 'silkscreen', '', 32);
+    this.text.fixedToCamera = true;
   }
-  return this;
-};
+
+  FPS.prototype.update = function() {
+    if (game.time.fps !== 60) {
+      this.text.visible = true;
+      this.text.cameraOffset.x = game.camera.width - 32 - this.text.width;
+      this.text.cameraOffset.y = 32;
+      this.text.setText((game.time.fps || '--') + ' FPS');
+    } else {
+      this.text.visible = false;
+    }
+    return this;
+  };
+
+  return FPS;
+
+})();
 
 TextBox = function() {
   return this;
 };
 
 TextBox.prototype.create = function() {
-  this.background = new Box({
+  this.box = new Box({
     width: 224,
     height: 48,
     x: 32,
     y: game.camera.height - 48 * 4 - 32
   });
+  this.background = this.box.sprite;
   this.text = game.add.bitmapText(0, 0, 'silkscreen', '', 32);
   this.text.fixedToCamera = true;
   this.text.cameraOffset.x = 56;
@@ -780,12 +815,13 @@ PauseMenu = function() {
 PauseMenu.prototype.create = function() {
   var i;
   this.boxHeight = 10 + this.entries.length - 1 + this.entries.length * 13;
-  this.background = new Box({
+  this.box = new Box({
     width: 73,
     height: this.boxHeight,
     x: game.camera.width - 73 * 4 - 32,
     y: game.camera.height - this.boxHeight * 4 - 32
   });
+  this.background = this.box.sprite;
   this.texts = [];
   this.clickables = [];
   i = this.entries.length - 1;
@@ -876,138 +912,155 @@ PauseMenu.prototype.show = function() {
   return this;
 };
 
-Crosshair = function(options) {
-  var defaultOptions;
-  defaultOptions = {
-    color: '#ffffff',
-    width: 2,
-    height: 2,
-    scale: 4
+Crosshair = (function() {
+  function Crosshair(options) {
+    var ref, ref1, ref2, ref3;
+    if (options == null) {
+      options = {};
+    }
+    this.color = (ref = options.color) != null ? ref : '#ffffff';
+    this.width = (ref1 = options.width) != null ? ref1 : 2;
+    this.height = (ref2 = options.height) != null ? ref2 : 2;
+    this.scale = (ref3 = options.scale) != null ? ref3 : 4;
+    this.x = 0;
+    this.y = 0;
+    this.sprite = this.createSprite();
+  }
+
+  Crosshair.prototype.createBitmapData = function() {
+    var bitmapData;
+    bitmapData = game.add.bitmapData(this.width, this.height);
+    bitmapData.context.fillStyle = this.color;
+    bitmapData.context.fillRect(0, 0, this.width, this.height);
+    return bitmapData;
   };
-  if (typeof options === 'object') {
-    options = $.extend(defaultOptions, options);
-  } else {
-    options = defaultOptions;
-  }
-  this.options = options;
-  this.x = 0;
-  this.y = 0;
-  this.bmd = game.add.bitmapData(this.options.width, this.options.height);
-  this.bmd.context.fillStyle = this.options.color;
-  this.bmd.context.fillRect(0, 0, this.options.width, this.options.height);
-  return this;
-};
 
-Crosshair.prototype.create = function() {
-  this.sprite = game.add.sprite(this.x, this.y, this.bmd);
-  this.sprite.scale.setTo(this.options.scale);
-  game.physics.enable(this.sprite);
-  this.sprite.anchor.setTo(0.5);
-  this.sprite.fixedToCamera = true;
-  return this;
-};
-
-Crosshair.prototype.update = function() {
-  this.x = game.controls.worldX;
-  this.x = this.x ? this.x : 0;
-  this.y = game.controls.worldY;
-  this.y = this.y ? this.y : 0;
-  this.sprite.cameraOffset.setTo(this.x - game.camera.x, this.y - game.camera.y);
-  return this;
-};
-
-FoeView = function(options) {
-  var defaultOptions;
-  defaultOptions = {
-    color: '#ff0000',
-    width: 2,
-    height: 2,
-    scale: 4,
-    maxFoes: 100
+  Crosshair.prototype.createSprite = function() {
+    var bmd, sprite;
+    bmd = this.createBitmapData();
+    sprite = game.add.sprite(this.x, this.y, bmd);
+    sprite.scale.setTo(this.scale);
+    game.physics.enable(sprite);
+    sprite.anchor.setTo(0.5);
+    sprite.fixedToCamera = true;
+    return sprite;
   };
-  if (typeof options === 'object') {
-    options = $.extend(defaultOptions, options);
-  } else {
-    options = defaultOptions;
+
+  Crosshair.prototype.update = function() {
+    this.x = game.controls.worldX;
+    this.x = this.x ? this.x : 0;
+    this.y = game.controls.worldY;
+    this.y = this.y ? this.y : 0;
+    this.sprite.cameraOffset.setTo(this.x - game.camera.x, this.y - game.camera.y);
+    return this;
+  };
+
+  return Crosshair;
+
+})();
+
+FoeView = (function() {
+  function FoeView(options) {
+    var ref, ref1, ref2, ref3, ref4;
+    if (options == null) {
+      options = {};
+    }
+    this.width = (ref = options.width) != null ? ref : 2;
+    this.height = (ref1 = options.height) != null ? ref1 : 2;
+    this.scale = (ref2 = options.scale) != null ? ref2 : 4;
+    this.maxFoes = (ref3 = options.maxFoes) != null ? ref3 : 100;
+    this.foeMarkers = game.add.group();
+    this.foeMarkers.createMultiple(this.maxFoes, 'foemarker');
+    this.foeMarkers.setAll('anchor.x', 0.5);
+    this.foeMarkers.setAll('anchor.y', 0.5);
+    this.foeMarkers.setAll('scale.x', this.scale);
+    this.foeMarkers.setAll('scale.y', this.scale);
+    this.foeMarkers.setAll('fixedToCamera', true);
+    this.state = game.state.states[game.state.current];
+    this.player = (ref4 = this.state.girl) != null ? ref4.player : void 0;
   }
-  this.options = options;
-  return this;
-};
 
-FoeView.prototype.create = function() {
-  this.foeMarkers = game.add.group();
-  this.foeMarkers.createMultiple(this.options.maxFoes, 'foemarker');
-  this.foeMarkers.setAll('anchor.x', 0.5);
-  this.foeMarkers.setAll('anchor.y', 0.5);
-  this.foeMarkers.setAll('scale.x', this.options.scale);
-  this.foeMarkers.setAll('scale.y', this.options.scale);
-  this.foeMarkers.setAll('fixedToCamera', true);
-  return this;
-};
+  FoeView.prototype.update = function() {
+    if (game.mode === 'level') {
+      this.foeMarkers.forEachAlive((function(foeMarker) {
+        return foeMarker.kill();
+      }), this);
+    }
+    return this;
+  };
 
-FoeView.prototype.update = function() {
-  if (game.mode === 'level') {
-    this.foeMarkers.forEachAlive((function(foeMarker) {
-      foeMarker.kill();
-    }), this);
-  }
-  return this;
-};
-
-FoeView.prototype.updateGroup = function(group) {
-  var bottomLeftOne, bottomLeftThree, bottomLeftTwo, bottomRight, foeMarker, intersection, lineOfSight, player, temp, topLeft, topRight;
-  if (game.controls.f.isDown && game.mode === 'level') {
-    topLeft = {
-      x: game.camera.x,
-      y: game.camera.y
-    };
-    topRight = {
-      x: game.camera.x + game.camera.width,
-      y: game.camera.y
-    };
-    bottomLeftOne = {
-      x: game.camera.x + 20 * 4,
-      y: game.camera.y + game.camera.height - 7 * 4
-    };
-    bottomLeftTwo = {
-      x: game.camera.x + 20 * 4,
-      y: game.camera.y + game.camera.height - 20 * 4
-    };
-    bottomLeftThree = {
-      x: game.camera.x,
-      y: game.camera.y + game.camera.height - 20 * 4
-    };
-    bottomRight = {
-      x: game.camera.x + game.camera.width,
-      y: game.camera.y + game.camera.height - 7 * 4
-    };
-    lineOfSight = void 0;
-    foeMarker = void 0;
-    temp = void 0;
-    player = game.state.states[game.state.current].girl.player;
-    intersection = false;
-    this.borders = [new Phaser.Line(topLeft.x, topLeft.y, topRight.x, topRight.y), new Phaser.Line(topRight.x, topRight.y, bottomRight.x, bottomRight.y), new Phaser.Line(bottomRight.x, bottomRight.y, bottomLeftOne.x, bottomLeftOne.y), new Phaser.Line(bottomLeftOne.x, bottomLeftOne.y, bottomLeftTwo.x, bottomLeftTwo.y), new Phaser.Line(bottomLeftTwo.x, bottomLeftTwo.y, bottomLeftThree.x, bottomLeftThree.y), new Phaser.Line(bottomLeftThree.x, bottomLeftThree.y, topLeft.x, topLeft.y)];
-    group.forEachAlive((function(foe) {
-      var i;
-      if (this.foeMarkers.countDead() > 0) {
-        lineOfSight = new Phaser.Line(player.body.center.x, player.body.center.y, foe.body.center.x, foe.body.center.y);
-        i = this.borders.length - 1;
-        while (i >= 0) {
-          temp = lineOfSight.intersects(this.borders[i]);
-          intersection = temp ? temp : intersection;
-          i--;
-        }
-        if (intersection) {
-          foeMarker = this.foeMarkers.getFirstDead();
-          foeMarker.reset();
-          foeMarker.cameraOffset.x = intersection.x - game.camera.x;
-          foeMarker.cameraOffset.y = intersection.y - game.camera.y;
-        }
+  FoeView.prototype.getInterfaceCorners = function() {
+    var c;
+    c = game.camera;
+    return {
+      topLeft: {
+        x: c.x,
+        y: c.y
+      },
+      topRight: {
+        x: c.x + c.width,
+        y: c.y
+      },
+      bottomLeftOne: {
+        x: c.x + 20 * this.scale,
+        y: c.y + c.height - 7 * this.scale
+      },
+      bottomLeftTwo: {
+        x: c.x + 20 * this.scale,
+        y: c.y + c.height - 20 * this.scale
+      },
+      bottomLeftThree: {
+        x: c.x,
+        y: c.y + c.height - 20 * this.scale
+      },
+      bottomRight: {
+        x: c.x + c.width,
+        y: c.y + c.height - 7 * this.scale
       }
-    }), this);
-  }
-  return this;
-};
+    };
+  };
+
+  FoeView.prototype.getInterfaceBorders = function() {
+    var i;
+    i = this.getInterfaceCorners();
+    return [new Phaser.Line(i.topLeft.x, i.topLeft.y, i.topRight.x, i.topRight.y), new Phaser.Line(i.topRight.x, i.topRight.y, i.bottomRight.x, i.bottomRight.y), new Phaser.Line(i.bottomRight.x, i.bottomRight.y, i.bottomLeftOne.x, i.bottomLeftOne.y), new Phaser.Line(i.bottomLeftOne.x, i.bottomLeftOne.y, i.bottomLeftTwo.x, i.bottomLeftTwo.y), new Phaser.Line(i.bottomLeftTwo.x, i.bottomLeftTwo.y, i.bottomLeftThree.x, i.bottomLeftThree.y), new Phaser.Line(i.bottomLeftThree.x, i.bottomLeftThree.y, i.topLeft.x, i.topLeft.y)];
+  };
+
+  FoeView.prototype.getLineOfSight = function(foe) {
+    var f, p;
+    p = this.player.body.center;
+    f = foe.body.center;
+    return new Phaser.Line(p.x, p.y, f.x, f.y);
+  };
+
+  FoeView.prototype.updateGroup = function(group) {
+    var borders;
+    if (game.controls.f.isDown && game.mode === 'level') {
+      borders = this.getInterfaceBorders();
+      group.forEachAlive((function(foe) {
+        var border, foeMarker, intersection, k, len, lineOfSight, temp;
+        if (this.foeMarkers.countDead() > 0) {
+          lineOfSight = this.getLineOfSight(foe);
+          for (k = 0, len = borders.length; k < len; k++) {
+            border = borders[k];
+            temp = lineOfSight.intersects(border);
+            intersection = temp ? temp : intersection;
+          }
+          if (intersection) {
+            foeMarker = this.foeMarkers.getFirstDead();
+            foeMarker.reset();
+            foeMarker.cameraOffset.x = intersection.x - game.camera.x;
+            foeMarker.cameraOffset.y = intersection.y - game.camera.y;
+          }
+        }
+      }), this);
+    }
+    return this;
+  };
+
+  return FoeView;
+
+})();
 
 Weapons = function() {
   if (typeof game.player === 'undefined') {
@@ -1407,6 +1460,39 @@ Weapons.prototype.fireballs.blue.medium.hitTest = function(enemies) {
   game.physics.arcade.overlap(this.bullets, enemies.group, this.hit);
   return this;
 };
+
+Character = (function() {
+  function Character(options) {
+    if (options == null) {
+      options = {};
+    }
+    this.scale = 4;
+    this.paused = false;
+    this.animations = [];
+    this.health = 100;
+    this.hitTimeout = false;
+    this.bodySize = {
+      width: 32,
+      height: 32,
+      x: -16,
+      y: 0
+    };
+  }
+
+  Character.prototype.addAnimations = function() {
+    var animation, k, len, ref, results;
+    ref = this.animations;
+    results = [];
+    for (k = 0, len = ref.length; k < len; k++) {
+      animation = ref[k];
+      results.push(this.sprite.animations.add(animation));
+    }
+    return results;
+  };
+
+  return Character;
+
+})();
 
 Skeletons = function(count) {
   this.count = count;
@@ -2098,9 +2184,7 @@ TinyRPG.Default.prototype = {
     }
     game.ui = game.ui ? game.ui : {};
     game.ui.foeView = new FoeView;
-    game.ui.foeView.create();
     game.ui.fps = new FPS;
-    game.ui.fps.create();
     game.ui.statusInfo = new StatusInfo;
     game.ui.statusInfo.create();
     game.ui.blank = new Blank({
@@ -2111,7 +2195,6 @@ TinyRPG.Default.prototype = {
     game.ui.pauseMenu = new PauseMenu;
     game.ui.pauseMenu.create();
     game.ui.crosshair = new Crosshair;
-    game.ui.crosshair.create();
   },
   update: function() {
     game.controls.update();
