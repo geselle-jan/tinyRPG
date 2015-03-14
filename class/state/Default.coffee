@@ -12,7 +12,6 @@ TinyRPG.Default.prototype =
         game.ui.statusInfo.create()
         game.ui.blank = new Blank {visible: yes}
         game.ui.textbox = new TextBox
-        game.ui.textbox.create()
         game.ui.pauseMenu = new PauseMenu
         game.ui.pauseMenu.create()
         game.ui.crosshair = new Crosshair
@@ -22,7 +21,6 @@ TinyRPG.Default.prototype =
         game.ui.foeView.update()
         game.ui.fps.update()
         game.ui.statusInfo.update()
-        game.ui.textbox.update()
         game.ui.pauseMenu.update()
         game.ui.crosshair.update()
         return
