@@ -880,118 +880,168 @@ TextBox = (function() {
 
 })();
 
-PauseMenu = function() {
-  this.entries = [
+PauseMenu = (function() {
+  PauseMenu.prototype.entries = [
     {
-      name: 'Character'
+      name: 'Character',
+      action: function() {
+        return alert('Character');
+      }
     }, {
-      name: 'Save'
+      name: 'Save',
+      action: function() {
+        return alert('Save');
+      }
     }, {
-      name: 'Quit'
+      name: 'Quit',
+      action: function() {
+        return alert('Quit');
+      }
     }
   ];
-  return this;
-};
 
-PauseMenu.prototype.create = function() {
-  var i;
-  this.boxHeight = 10 + this.entries.length - 1 + this.entries.length * 13;
-  this.box = new Box({
-    width: 73,
-    height: this.boxHeight,
-    x: game.camera.width - 73 * 4 - 32,
-    y: game.camera.height - this.boxHeight * 4 - 32
-  });
-  this.background = this.box.sprite;
-  this.texts = [];
-  this.clickables = [];
-  i = this.entries.length - 1;
-  while (i >= 0) {
-    this.texts[i] = game.add.bitmapText(0, 0, 'silkscreen', this.entries[i].name, 32);
-    this.texts[i].fixedToCamera = true;
-    this.texts[i].cameraOffset.x = 167 * 4;
-    this.texts[i].cameraOffset.y = game.camera.height - 10 * 4 - (this.entries.length - i) * 4 * 14;
-    this.clickables[i] = game.add.sprite(0, 0, 'menuclickable');
-    this.clickables[i].fixedToCamera = true;
-    this.clickables[i].scale.setTo(4);
-    this.clickables[i].cameraOffset.x = 164 * 4;
-    this.clickables[i].cameraOffset.y = game.camera.height - 12 * 4 - (this.entries.length - i) * 4 * 14;
-    this.entries[i].index = i;
-    this.clickables[i].data = this.entries[i];
-    this.clickables[i].inputEnabled = true;
-    this.clickables[i].events.onInputOver.add((function() {
-      var active, index, that;
-      that = game.ui.pauseMenu;
-      active = that.activeIndicator;
-      index = this.data.index;
-      active.visible = true;
-      active.cameraOffset.x = 157 * 4;
-      active.cameraOffset.y = that.clickables[index].cameraOffset.y + 3 * 4;
-    }), this.clickables[i]);
-    this.clickables[i].events.onInputOut.add((function() {
-      var active, that;
-      that = game.ui.pauseMenu;
-      active = that.activeIndicator;
-      active.visible = false;
-    }), this.clickables[i]);
-    this.clickables[i].events.onInputDown.add((function() {
-      alert(this.data.name);
-    }), this.clickables[i]);
-    i--;
+  function PauseMenu() {
+    var i;
+    this.scale = 4;
+    this.background = this.createBackground();
+    this.texts = [];
+    this.clickables = [];
+    i = this.entries.length - 1;
+    while (i >= 0) {
+      this.entries[i].index = i;
+      this.texts[i] = this.createText(i);
+      this.clickables[i] = this.createClickable(i);
+      i--;
+    }
+    this.activeIndicator = this.createActiveIndicator();
+    this.initalMode = game.mode;
+    this.lastOpened = game.time.now;
+    this.hide();
+    this.bindEscDown();
   }
-  this.activeIndicator = game.add.sprite(0, 0, 'boxborderactive');
-  this.activeIndicator.fixedToCamera = true;
-  this.activeIndicator.scale.setTo(4);
-  this.activeIndicator.cameraOffset.x = 0;
-  this.activeIndicator.cameraOffset.y = 0;
-  this.activeIndicator.visible = false;
-  this.initalMode = game.mode;
-  this.lastOpened = game.time.now;
-  this.hide();
-  game.controls.esc.onDown.add((function() {
-    if (game.mode === 'menu' && game.time.now - this.lastOpened > 100) {
+
+  PauseMenu.prototype.createBackground = function() {
+    var box, boxHeight;
+    boxHeight = 10 + this.entries.length - 1 + this.entries.length * 13;
+    box = new Box({
+      width: 73,
+      height: boxHeight,
+      x: game.camera.width - 73 * this.scale - 8 * this.scale,
+      y: game.camera.height - boxHeight * this.scale - 8 * this.scale
+    });
+    return box.sprite;
+  };
+
+  PauseMenu.prototype.createText = function(index) {
+    var text;
+    text = game.add.bitmapText(0, 0, 'silkscreen', this.entries[index].name, 8 * this.scale);
+    text.fixedToCamera = true;
+    text.cameraOffset.x = 167 * this.scale;
+    text.cameraOffset.y = game.camera.height - 10 * this.scale - (this.entries.length - index) * this.scale * 14;
+    return text;
+  };
+
+  PauseMenu.prototype.bindInputOver = function(item) {
+    return item.events.onInputOver.add((function() {
+      this.activeIndicator.visible = true;
+      this.activeIndicator.cameraOffset.x = 157 * this.scale;
+      return this.activeIndicator.cameraOffset.y = item.cameraOffset.y + 3 * this.scale;
+    }), this);
+  };
+
+  PauseMenu.prototype.bindInputOut = function(item) {
+    return item.events.onInputOut.add((function() {
+      return this.activeIndicator.visible = false;
+    }), this);
+  };
+
+  PauseMenu.prototype.bindInputDown = function(item) {
+    return item.events.onInputDown.add((function() {
+      var base;
       this.hide();
-    } else if (game.mode === 'level') {
-      this.show();
+      return typeof (base = this.entries[item.menuIndex]).action === "function" ? base.action() : void 0;
+    }), this);
+  };
+
+  PauseMenu.prototype.bindEscDown = function() {
+    return game.controls.esc.onDown.add((function() {
+      if (game.mode === 'menu' && game.time.now - this.lastOpened > 100) {
+        return this.hide();
+      } else if (game.mode === 'level') {
+        return this.show();
+      }
+    }), this);
+  };
+
+  PauseMenu.prototype.createClickable = function(index) {
+    var clickable;
+    clickable = game.add.sprite(0, 0, 'menuclickable');
+    clickable.menuIndex = index;
+    clickable.fixedToCamera = true;
+    clickable.scale.setTo(this.scale);
+    clickable.cameraOffset.x = 164 * this.scale;
+    clickable.cameraOffset.y = game.camera.height - 12 * this.scale - (this.entries.length - index) * this.scale * 14;
+    clickable.data = this.entries[index];
+    clickable.inputEnabled = true;
+    this.bindInputOver(clickable);
+    this.bindInputOut(clickable);
+    this.bindInputDown(clickable);
+    return clickable;
+  };
+
+  PauseMenu.prototype.createActiveIndicator = function() {
+    var indicator;
+    indicator = game.add.sprite(0, 0, 'boxborderactive');
+    indicator.fixedToCamera = true;
+    indicator.scale.setTo(this.scale);
+    indicator.cameraOffset.x = 0;
+    indicator.cameraOffset.y = 0;
+    indicator.visible = false;
+    return indicator;
+  };
+
+  PauseMenu.prototype.hide = function() {
+    var clickable, k, l, len, len1, ref, ref1, text;
+    this.background.visible = false;
+    this.activeIndicator.visible = false;
+    ref = this.texts;
+    for (k = 0, len = ref.length; k < len; k++) {
+      text = ref[k];
+      text.visible = false;
     }
-  }), this);
-  return this;
-};
-
-PauseMenu.prototype.update = function() {
-  return this;
-};
-
-PauseMenu.prototype.hide = function() {
-  var i;
-  this.background.visible = false;
-  this.activeIndicator.visible = false;
-  i = this.texts.length - 1;
-  while (i >= 0) {
-    this.texts[i].visible = false;
-    this.clickables[i].visible = false;
-    i--;
-  }
-  game.mode = this.initalMode;
-  return this;
-};
-
-PauseMenu.prototype.show = function() {
-  var i;
-  this.lastOpened = game.time.now;
-  this.background.visible = true;
-  i = this.texts.length - 1;
-  while (i >= 0) {
-    this.texts[i].visible = true;
-    this.clickables[i].visible = true;
-    if (this.clickables[i].input.checkPointerOver(game.input.activePointer)) {
-      this.clickables[i].events.onInputOver.dispatch();
+    ref1 = this.clickables;
+    for (l = 0, len1 = ref1.length; l < len1; l++) {
+      clickable = ref1[l];
+      clickable.visible = false;
     }
-    i--;
-  }
-  game.mode = 'menu';
-  return this;
-};
+    game.mode = this.initalMode;
+    return this;
+  };
+
+  PauseMenu.prototype.show = function() {
+    var clickable, k, l, len, len1, ref, ref1, text;
+    this.lastOpened = game.time.now;
+    this.background.visible = true;
+    ref = this.texts;
+    for (k = 0, len = ref.length; k < len; k++) {
+      text = ref[k];
+      text.visible = true;
+    }
+    ref1 = this.clickables;
+    for (l = 0, len1 = ref1.length; l < len1; l++) {
+      clickable = ref1[l];
+      clickable.visible = true;
+      if (clickable.input.checkPointerOver(game.input.activePointer)) {
+        clickable.events.onInputOver.dispatch();
+      }
+    }
+    game.mode = 'menu';
+    return this;
+  };
+
+  return PauseMenu;
+
+})();
 
 Crosshair = (function() {
   function Crosshair(options) {
@@ -2272,7 +2322,6 @@ TinyRPG.Default.prototype = {
     });
     game.ui.textbox = new TextBox;
     game.ui.pauseMenu = new PauseMenu;
-    game.ui.pauseMenu.create();
     game.ui.crosshair = new Crosshair;
   },
   update: function() {
@@ -2280,7 +2329,6 @@ TinyRPG.Default.prototype = {
     game.ui.foeView.update();
     game.ui.fps.update();
     game.ui.statusInfo.update();
-    game.ui.pauseMenu.update();
     game.ui.crosshair.update();
   },
   render: function() {}
