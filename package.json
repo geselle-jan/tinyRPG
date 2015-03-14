@@ -1,22 +1,20 @@
 {
-  "main": "index.html",
   "name": "tinyRPG",
-  "description": "a tiny rpg",
-  "version": "0.1.0",
-  "keywords": [ "rpg", "8bit", "loafer" ],
-  "window": {
-    "title": "tinyRPG",
-    "icon": "link.png",
-    "toolbar": false,
-    "frame": true,
-    "width": 960,
-    "height": 640,
-    "position": "mouse",
-    "min_width": 240,
-    "min_height": 160,
-    "max_width": 960,
-    "max_height": 640
+  "version": 0.1,
+  "homepage": "http://loafer-project.com/",
+  "author": {
+    "name": "Jan Geselle"
   },
-  "webkit": {
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-coffee": "^0.13.0",
+    "grunt-contrib-concat": "~0.4.0",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-qunit": "~0.5.2",
+    "grunt-contrib-uglify": "~0.5.0",
+    "grunt-contrib-watch": "~0.6.1"
   }
 }
