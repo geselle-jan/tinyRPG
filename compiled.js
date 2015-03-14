@@ -672,61 +672,131 @@ Box = (function() {
 
 })();
 
-StatusInfo = function() {
-  return this;
-};
+StatusInfo = (function() {
+  function StatusInfo(options) {
+    var barData;
+    if (options == null) {
+      options = {};
+    }
+    this.scale = 4;
+    this.background = this.createBackground();
+    barData = {
+      health: {
+        color: '#D04648',
+        x: 39,
+        y: 155
+      },
+      mana: {
+        color: '#597DCE',
+        x: 111,
+        y: 155
+      },
+      xp: {
+        color: '#6CAA2C',
+        x: 183,
+        y: 155
+      }
+    };
+    this.createBars(barData);
+    this.currentWeapon = this.createCurrentWeapon();
+  }
 
-StatusInfo.prototype.create = function() {
-  this.background = game.add.sprite(0, 0, 'statusinfo');
-  this.background.scale.setTo(4);
-  this.background.fixedToCamera = true;
-  this.background.cameraOffset.x = 0;
-  this.background.cameraOffset.y = game.camera.height - this.background.height;
-  this.background.visible = false;
-  this.makeBar('health', '#D04648', 39, 155);
-  this.makeBar('mana', '#597DCE', 111, 155);
-  this.makeBar('xp', '#6CAA2C', 183, 155);
-  this.currentWeapon = game.add.sprite(0, 0, 'tiny16');
-  this.currentWeapon.fixedToCamera = true;
-  this.currentWeapon.cameraOffset.x = 2 * 4;
-  this.currentWeapon.cameraOffset.y = 142 * 4;
-  this.currentWeapon.visible = false;
-  return this;
-};
+  StatusInfo.prototype.createBackground = function() {
+    var background;
+    background = game.add.sprite(0, 0, 'statusinfo');
+    background.scale.setTo(this.scale);
+    background.fixedToCamera = true;
+    background.cameraOffset.x = 0;
+    background.cameraOffset.y = game.camera.height - background.height;
+    background.visible = false;
+    return background;
+  };
 
-StatusInfo.prototype.update = function() {
-  if (typeof game.state.states[game.state.current].girl === 'undefined' || typeof game.player === 'undefined' || typeof game.player.health === 'undefined') {
-    this.background.visible = false;
-    this.healthbar.visible = false;
-    this.manabar.visible = false;
-    this.xpbar.visible = false;
-    this.currentWeapon.visible = false;
-  } else {
+  StatusInfo.prototype.createCurrentWeapon = function() {
+    var currentWeapon;
+    currentWeapon = game.add.sprite(0, 0, 'tiny16');
+    currentWeapon.fixedToCamera = true;
+    currentWeapon.cameraOffset.x = 2 * this.scale;
+    currentWeapon.cameraOffset.y = 142 * this.scale;
+    currentWeapon.visible = true;
+    return currentWeapon;
+  };
+
+  StatusInfo.prototype.createBarBitmapData = function(color, width, height) {
+    var bitmapData;
+    bitmapData = game.add.bitmapData(width, height);
+    bitmapData.context.fillStyle = color;
+    bitmapData.context.fillRect(0, 0, width, height);
+    return bitmapData;
+  };
+
+  StatusInfo.prototype.createBar = function(name, color, x, y) {
+    var bar;
+    bar = this[name + 'bar'] = game.add.sprite(0, 0, this.createBarBitmapData(color, 50, 3));
+    bar.scale.setTo(this.scale);
+    bar.fixedToCamera = true;
+    bar.cameraOffset.x = x * this.scale;
+    bar.cameraOffset.y = y * this.scale;
+    bar.visible = false;
+    return bar;
+  };
+
+  StatusInfo.prototype.createBars = function(data) {
+    var name, params, results;
+    results = [];
+    for (name in data) {
+      params = data[name];
+      results.push(this.createBar(name, params.color, params.x, params.y));
+    }
+    return results;
+  };
+
+  StatusInfo.prototype.show = function() {
     this.background.visible = true;
     this.healthbar.visible = true;
     this.manabar.visible = true;
     this.xpbar.visible = true;
     this.currentWeapon.visible = true;
-    this.healthbar.width = Math.ceil(game.player.health / 2) * 4;
-    this.manabar.width = Math.ceil(game.player.mana / 2) * 4;
-    this.xpbar.width = Math.ceil(game.player.xp / 2) * 4;
-    this.currentWeapon.frame = game.player.activeWeapon.iconFrame;
-  }
-  return this;
-};
+    return this;
+  };
 
-StatusInfo.prototype.makeBar = function(name, color, x, y) {
-  this['bmd' + name] = game.add.bitmapData(50, 3);
-  this['bmd' + name].context.fillStyle = color;
-  this['bmd' + name].context.fillRect(0, 0, 50, 3);
-  this[name + 'bar'] = game.add.sprite(0, 0, this['bmd' + name]);
-  this[name + 'bar'].scale.setTo(4);
-  this[name + 'bar'].fixedToCamera = true;
-  this[name + 'bar'].cameraOffset.x = x * 4;
-  this[name + 'bar'].cameraOffset.y = y * 4;
-  this[name + 'bar'].visible = false;
-  return this;
-};
+  StatusInfo.prototype.hide = function() {
+    this.background.visible = false;
+    this.healthbar.visible = false;
+    this.manabar.visible = false;
+    this.xpbar.visible = false;
+    this.currentWeapon.visible = false;
+    return this;
+  };
+
+  StatusInfo.prototype.updateBarLengths = function() {
+    this.healthbar.width = Math.ceil(game.player.health / 2) * this.scale;
+    this.manabar.width = Math.ceil(game.player.mana / 2) * this.scale;
+    this.xpbar.width = Math.ceil(game.player.xp / 2) * this.scale;
+    return this;
+  };
+
+  StatusInfo.prototype.updateCurrentWeapon = function() {
+    this.currentWeapon.frame = game.player.activeWeapon.iconFrame;
+    return this;
+  };
+
+  StatusInfo.prototype.update = function() {
+    var ref, state;
+    state = game.state.states[game.state.current];
+    if ((state.girl != null) && (((ref = game.player) != null ? ref.health : void 0) != null)) {
+      this.show();
+      this.updateBarLengths();
+      this.updateCurrentWeapon();
+    } else {
+      this.hide();
+    }
+    return this;
+  };
+
+  return StatusInfo;
+
+})();
 
 FPS = (function() {
   function FPS() {
@@ -2197,7 +2267,6 @@ TinyRPG.Default.prototype = {
     game.ui.foeView = new FoeView;
     game.ui.fps = new FPS;
     game.ui.statusInfo = new StatusInfo;
-    game.ui.statusInfo.create();
     game.ui.blank = new Blank({
       visible: true
     });

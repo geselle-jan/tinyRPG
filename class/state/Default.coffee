@@ -9,7 +9,6 @@ TinyRPG.Default.prototype =
         game.ui.foeView = new FoeView
         game.ui.fps = new FPS
         game.ui.statusInfo = new StatusInfo
-        game.ui.statusInfo.create()
         game.ui.blank = new Blank {visible: yes}
         game.ui.textbox = new TextBox
         game.ui.pauseMenu = new PauseMenu
