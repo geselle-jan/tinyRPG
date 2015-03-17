@@ -2,12 +2,13 @@
   "name": "tinyRPG",
   "description": "a tiny rpg",
   "main": "index.html",
-  "version": 0.1,
+  "version": "0.0.1",
   "keywords": [ "rpg", "8bit", "loafer" ],
   "homepage": "http://loafer-project.com/",
   "author": {
     "name": "Jan Geselle"
   },
+  "private": true,
   "engines": {
     "node": ">= 0.10.0"
   },

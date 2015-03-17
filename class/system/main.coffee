@@ -22,16 +22,49 @@ game.state.start 'Boot'
 $ ->
     $(window).konami
         code: [
-            38
-            38
-            40
-            40
-            37
-            39
-            37
-            39
+            38# up
+            38# up
+            40# down
+            40# down
+            37# left
+            39# right
+            37# left
+            39# right
         ]
         cheat: ->
             $('body').toggleClass 'retro'
-            return
-    return
+    $(window).konami
+        code: [
+            84# t
+            79# o
+            68# d
+            85# u
+            78# n
+            71# g
+            69# e
+            79# o
+            78# n
+        ]
+        cheat: ->
+            toDungeon()
+    $(window).konami
+        code: [
+            84# t
+            72# h
+            69# e
+            82# r
+            69# e
+            73# i
+            83# s
+            78# n
+            79# o
+            83# s
+            80# p
+            79# o
+            79# o
+            78# n
+        ]
+        cheat: ->
+            setInterval (->
+              game.player.mana = 100
+            ), 1000
