@@ -4,11 +4,10 @@ class Blank
         visible = options.visible ? no
         @color = options.color ? '#17091C'
         @speed = options.speed ? 400
-        @width = game.camera.width
+        @width = game.camera.width 
         @height = game.camera.height
         @x = 0
         @y = 0
-        @scale = 4
         @sprite = @createSprite()
         @sprite.visible = visible
         @sprite.alpha = if visible then 1 else 0
@@ -21,10 +20,9 @@ class Blank
 
     createSprite: ->
         sprite = game.add.sprite 0, 0, @createBitmapData()
-        sprite.scale.setTo @scale
         sprite.fixedToCamera = yes
-        sprite.cameraOffset.x = @x * @scale
-        sprite.cameraOffset.y = @y * @scale
+        sprite.cameraOffset.x = @x
+        sprite.cameraOffset.y = @y
         sprite
 
     isFading: ->
