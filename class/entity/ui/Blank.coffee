@@ -4,8 +4,8 @@ class Blank
         visible = options.visible ? no
         @color = options.color ? '#17091C'
         @speed = options.speed ? 400
-        @width = 240
-        @height = 160
+        @width = game.camera.width
+        @height = game.camera.height
         @x = 0
         @y = 0
         @scale = 4
