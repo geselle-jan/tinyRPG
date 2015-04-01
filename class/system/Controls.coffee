@@ -14,6 +14,7 @@ Controls = ->
     @worldY = 0
     @cursors = {}
     @formerMouse = -1
+    @mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test navigator.userAgent
     this
 
 Controls::create = ->
